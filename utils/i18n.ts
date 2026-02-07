@@ -61,8 +61,17 @@ export const dictionary = {
     resultYield: "Yield (%)",
     aboutTitle: "About this tool",
     aboutBtn: "About",
-    aboutContent:
-      "This tool calculates the theoretical stock price based on your target PER, PBR, and Dividend Yield. Enter the current stock price and financial indicators, then adjust the targets to see the price that satisfies all conditions.",
+    aboutContent: `
+      <p>This tool calculates the theoretical stock price based on your target PER, PBR, and Dividend Yield.</p>
+      <hr>
+      <strong>[Example Usage]</strong><br>
+      "To set a limit order regarding a stock currently at $1000 with 3% yield, targeting a 4% yield"
+      <ol>
+        <li>Enter <strong>1000</strong> for Price and <strong>3</strong> for Current Yield.</li>
+        <li>Set the Target Yield slider to <strong>4</strong>.</li>
+        <li>The calculated Target Price <strong>$750</strong> will be displayed.</li>
+      </ol>
+    `,
     close: "Close",
   },
   ja: {
@@ -98,8 +107,19 @@ export const dictionary = {
     resultYield: "利回り (%)",
     aboutTitle: "このサイトについて",
     aboutBtn: "使い方",
-    aboutContent:
-      "目標とするPER、PBR、配当利回りから、理論的な株価を逆算するツールです。現在の株価と財務指標を入力し、目標指標を調整することで、全ての条件を満たす株価（最も保守的な算出結果）を表示します。",
+    aboutContent: `
+      <p>目標とするPER、PBR、配当利回りから、理論的な株価を逆算するツールです。</p>
+      <p>現在の株価と財務指標を入力し、目標指標を調整することで、全ての条件を満たす株価（最も保守的な算出結果）を表示します。</p>
+      <hr>
+      <strong>【使い方例】</strong><br>
+      「株価1000円で現在の利回りが3%の銘柄を、利回りが4%になるように指値を設定したい」場合
+      <ol>
+        <li>現在値入力欄の「株価」に <strong>1000</strong>、「現在利回り」に <strong>3</strong> を入力します。</li>
+        <li>目標指標の「目標利回り」スライダーを動かして <strong>4</strong> に設定します。</li>
+        <li>算出結果に <strong>750</strong> (円) と表示されます。</li>
+      </ol>
+      <p>これが、利回り4%になるための指値価格です。</p>
+    `,
     close: "閉じる",
   },
 };

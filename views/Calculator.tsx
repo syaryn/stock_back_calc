@@ -200,7 +200,7 @@ document.addEventListener('alpine:init', () => {
               <strong x-text="t('aboutTitle')"></strong>
             </p>
           </header>
-          <p x-text="t('aboutContent')"></p>
+          <div x-html="t('aboutContent')"></div>
         </article>
       </dialog>
 
