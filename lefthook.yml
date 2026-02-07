@@ -3,7 +3,7 @@ pre-commit:
   commands:
     lint:
       glob: "*.ts"
-      run: deno lint {staged_files}
+      run: mise exec -- deno lint {staged_files}
     fmt:
       glob: "*.ts"
-      run: deno fmt {staged_files} --check
+      run: mise exec -- deno fmt --check {staged_files}
