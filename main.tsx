@@ -4,7 +4,11 @@ import { Calculator } from "./views/Calculator.tsx";
 import { detectLanguage } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
+import { serveStatic } from "hono/deno";
+
 export const app = new Hono();
+
+app.use("/*", serveStatic({ root: "./static" }));
 
 app.get("/", (c) => {
   const acceptLanguage = c.req.header("Accept-Language") || null;

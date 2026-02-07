@@ -26,6 +26,14 @@ Deno.test("GET / with Japanese accept-language header returns Japanese", async (
   assertStringIncludes(text, "現在値");
 });
 
+Deno.test("GET /favicon.ico returns 200", async () => {
+  const req = new Request("http://localhost:8000/favicon.ico");
+  const res = await app.request(req);
+  assertEquals(res.status, 200);
+  const blob = await res.blob();
+  assertEquals(blob.size > 0, true);
+});
+
 Deno.test("GET /?stockPrice=1000&currentPer=10&targetPer=15 returns calculated result", async () => {
   // Input: Price 1000, PER 10 => EPS 100
   // Target: PER 15 => Price 1500
