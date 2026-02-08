@@ -62,6 +62,7 @@ export const dictionary = {
     resultPbr: "PBR",
     resultYield: "Yield (%)",
     aboutTitle: "About this tool",
+    aboutBtn: "About",
     bottleneckDesc: "Bottleneck Indicator",
     aboutContent: `
       <p>This tool calculates the theoretical stock price based on your target PER, PBR, and Dividend Yield.</p>

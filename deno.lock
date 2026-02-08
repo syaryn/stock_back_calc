@@ -4,10 +4,7 @@
     "jsr:@hono/hono@*": "4.11.4",
     "jsr:@hono/hono@4": "4.11.4",
     "jsr:@std/assert@1": "1.0.16",
-    "jsr:@std/internal@^1.0.12": "1.0.12",
-    "npm:@picocss/pico@^2.1.1": "2.1.1",
-    "npm:alpinejs@^3.15.8": "3.15.8",
-    "npm:htmx.org@^2.0.8": "2.0.8"
+    "jsr:@std/internal@^1.0.12": "1.0.12"
   },
   "jsr": {
     "@hono/hono@4.11.4": {
@@ -23,36 +20,10 @@
       "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
     }
   },
-  "npm": {
-    "@picocss/pico@2.1.1": {
-      "integrity": "sha512-kIDugA7Ps4U+2BHxiNHmvgPIQDWPDU4IeU6TNRdvXQM1uZX+FibqDQT2xUOnnO2yq/LUHcwnGlu1hvf4KfXnMg=="
-    },
-    "@vue/reactivity@3.1.5": {
-      "integrity": "sha512-1tdfLmNjWG6t/CsPldh+foumYFo3cpyCHgBYQ34ylaMsJ+SNHQ1kApMIa8jN+i593zQuaw3AdWH0nJTARzCFhg==",
-      "dependencies": [
-        "@vue/shared"
-      ]
-    },
-    "@vue/shared@3.1.5": {
-      "integrity": "sha512-oJ4F3TnvpXaQwZJNF3ZK+kLPHKarDmJjJ6jyzVNDKH9md1dptjC7lWR//jrGuLdek/U6iltWxqAnYOu8gCiOvA=="
-    },
-    "alpinejs@3.15.8": {
-      "integrity": "sha512-zxIfCRTBGvF1CCLIOMQOxAyBuqibxSEwS6Jm1a3HGA9rgrJVcjEWlwLcQTVGAWGS8YhAsTRLVrtQ5a5QT9bSSQ==",
-      "dependencies": [
-        "@vue/reactivity"
-      ]
-    },
-    "htmx.org@2.0.8": {
-      "integrity": "sha512-fm297iru0iWsNJlBrjvtN7V9zjaxd+69Oqjh4F/Vq9Wwi2kFisLcrLCiv5oBX0KLfOX/zG8AUo9ROMU5XUB44Q=="
-    }
-  },
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@4",
-      "jsr:@std/assert@1",
-      "npm:@picocss/pico@^2.1.1",
-      "npm:alpinejs@^3.15.8",
-      "npm:htmx.org@^2.0.8"
+      "jsr:@std/assert@1"
     ]
   }
 }

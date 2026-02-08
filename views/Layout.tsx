@@ -3,13 +3,18 @@ import { html } from "hono/html";
 import { Child } from "hono/jsx";
 
 export const Layout = (
-  props: { children: Child; title?: string; description?: string },
+  props: {
+    title: string;
+    description?: string;
+    lang?: string;
+    children?: Child;
+  },
 ) => {
   return html`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${props.lang || "en"}">
       <head>
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${props.description ||
           "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield."}" />
@@ -20,12 +25,12 @@ export const Layout = (
           href="https://cdnjs.cloudflare.com/ajax/libs/picocss/2.1.1/pico.min.css"
         />
         <script
-          src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js"
+          src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.8/htmx.min.js"
           defer
         ></script>
         <script
           defer
-          src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.0/cdn.min.js"
+          src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.8/cdn.min.js"
         ></script>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -46,29 +51,29 @@ export const Layout = (
         <meta name="theme-color" content="#ffffff" />
         <style>
         /* Custom styles for mobile responsiveness */
-        @media (max-width: 768px) {
-          .responsive-grid {
+          @media (max-width: 768px) {
+          .responsive - grid {
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 1rem;
-            padding-bottom: 1rem; /* For scrollbar space if needed */
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          gap: 1rem;
+          padding-bottom: 1rem; /* For scrollbar space if needed */
           }
           .responsive-grid > * {
             flex: 0 0 85%; /* 85% width to peek next card */
-            scroll-snap-align: center;
+          scroll-snap-align: center;
           }
         }
-        @media (min-width: 769px) {
-          .responsive-grid {
+          @media (min-width: 769px) {
+          .responsive - grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1.5rem;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 1.5rem;
           }
         }
-        /* Card height standardization */
-        .card-content {
-          height: 100%;
+          /* Card height standardization */
+          .card-content {
+            height: 100%;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
