@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
-import { detectLanguage } from "./utils/i18n.ts";
+import { detectLanguage, dictionary } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
 import { serveStatic } from "hono/deno";
@@ -29,7 +29,10 @@ app.get("/", (c) => {
   if (query.targetYield) initialTargets.yield = parseFloat(query.targetYield);
 
   return c.html(
-    <Layout>
+    <Layout
+      title={dictionary[lang].title}
+      description={dictionary[lang].description}
+    >
       <Calculator
         lang={lang}
         initialState={initialState}

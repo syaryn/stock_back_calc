@@ -2,22 +2,30 @@ import { html } from "hono/html";
 
 import { Child } from "hono/jsx";
 
-export const Layout = (props: { children: Child; title?: string }) => {
+export const Layout = (
+  props: { children: Child; title?: string; description?: string },
+) => {
   return html`
     <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="${props.description ||
+          "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield."}" />
         <title>${props.title || "Stock Target Price Calculator"}</title>
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
         <link
           rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/picocss/2.1.1/pico.min.css"
         />
-        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <script
+          src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js"
+          defer
+        ></script>
         <script
           defer
-          src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"
+          src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.0/cdn.min.js"
         ></script>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

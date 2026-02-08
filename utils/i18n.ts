@@ -31,6 +31,8 @@ export function detectLanguage(acceptLanguageHeader: string | null): Language {
 export const dictionary = {
   en: {
     title: "Stock Target Price Calculator",
+    description:
+      "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A simple tool for value investors.",
     currentValues: "Current Values",
     targetValues: "Target Indicators",
     results: "Target Prices",
@@ -60,7 +62,7 @@ export const dictionary = {
     resultPbr: "PBR",
     resultYield: "Yield (%)",
     aboutTitle: "About this tool",
-    aboutBtn: "About",
+    bottleneckDesc: "Bottleneck Indicator",
     aboutContent: `
       <p>This tool calculates the theoretical stock price based on your target PER, PBR, and Dividend Yield.</p>
       <hr>
@@ -76,6 +78,8 @@ export const dictionary = {
   },
   ja: {
     title: "目標株価逆算ツール",
+    description:
+      "目標とするPER、PBR、配当利回りから理論株価を逆算するツールです。バリュー投資家向けのシミュレーションに最適。",
     currentValues: "現在値",
     targetValues: "目標指標",
     results: "算出結果",
