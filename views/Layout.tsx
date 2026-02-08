@@ -3,13 +3,18 @@ import { html } from "hono/html";
 import { Child } from "hono/jsx";
 
 export const Layout = (
-  props: { children: Child; title?: string; description?: string },
+  props: {
+    title: string;
+    description?: string;
+    lang?: string;
+    children?: Child;
+  },
 ) => {
   return html`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${props.lang || "en"}">
       <head>
-        <meta charset="UTF-8" />
+        <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${props.description ||
           "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield."}" />
@@ -46,29 +51,29 @@ export const Layout = (
         <meta name="theme-color" content="#ffffff" />
         <style>
         /* Custom styles for mobile responsiveness */
-        @media (max-width: 768px) {
+          @media (max-width: 768px) {
           .responsive-grid {
             display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 1rem;
-            padding-bottom: 1rem; /* For scrollbar space if needed */
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          gap: 1rem;
+          padding-bottom: 1rem; /* For scrollbar space if needed */
           }
           .responsive-grid > * {
             flex: 0 0 85%; /* 85% width to peek next card */
-            scroll-snap-align: center;
+          scroll-snap-align: center;
           }
         }
-        @media (min-width: 769px) {
+          @media (min-width: 769px) {
           .responsive-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1.5rem;
+          grid-template-columns: 1fr 1fr 1fr;
+          gap: 1.5rem;
           }
         }
-        /* Card height standardization */
-        .card-content {
-          height: 100%;
+          /* Card height standardization */
+          .card-content {
+            height: 100%;
           display: flex;
           flex-direction: column;
           justify-content: space-between;

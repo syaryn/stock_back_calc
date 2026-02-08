@@ -86,7 +86,7 @@ document.addEventListener('alpine:init', () => {
     },
 
     t(key) {
-      return this.dict[this.lang][key] || key
+      return this.dict[this.lang][key] || this.dict['en'][key] || key
     },
 
     toggleLang() {
