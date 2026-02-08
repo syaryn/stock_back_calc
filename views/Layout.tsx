@@ -25,12 +25,12 @@ export const Layout = (
           href="https://cdnjs.cloudflare.com/ajax/libs/picocss/2.1.1/pico.min.css"
         />
         <script
-          src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.8/htmx.min.js"
+          src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js"
           defer
         ></script>
         <script
           defer
-          src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.8/cdn.min.js"
+          src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.15.0/cdn.min.js"
         ></script>
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -52,7 +52,7 @@ export const Layout = (
         <style>
         /* Custom styles for mobile responsiveness */
           @media (max-width: 768px) {
-          .responsive - grid {
+          .responsive-grid {
             display: flex;
           overflow-x: auto;
           scroll-snap-type: x mandatory;
@@ -65,7 +65,7 @@ export const Layout = (
           }
         }
           @media (min-width: 769px) {
-          .responsive - grid {
+          .responsive-grid {
             display: grid;
           grid-template-columns: 1fr 1fr 1fr;
           gap: 1.5rem;
