@@ -335,32 +335,34 @@ document.addEventListener('alpine:init', () => {
             </div>
           </div>
 
-          <div x-show="results.minPrice !== null && implied">
-            <hr />
-            <div class="grid" style="text-align: center;">
-              <div>
-                <small x-text="t('resultPer')"></small><br>
-                <strong
-                  x-text="formatNumber(implied.per, 1)"
-                  :style="results.bottleneck === 'per' ? 'color: var(--pico-primary);' : ''"
-                ></strong>
-              </div>
-              <div>
-                <small x-text="t('resultPbr')"></small><br>
-                <strong
-                  x-text="formatNumber(implied.pbr, 2) + 'x'"
-                  :style="results.bottleneck === 'pbr' ? 'color: var(--pico-primary);' : ''"
-                ></strong>
-              </div>
-              <div>
-                <small x-text="t('resultYield')"></small><br>
-                <strong
-                  x-text="formatNumber(implied.yield, 2)"
-                  :style="results.bottleneck === 'yield' ? 'color: var(--pico-primary);' : ''"
-                ></strong>
+          <template x-if="results.minPrice !== null && implied">
+            <div>
+              <hr />
+              <div class="grid" style="text-align: center;">
+                <div>
+                  <small x-text="t('resultPer')"></small><br>
+                  <strong
+                    x-text="formatNumber(implied.per, 1)"
+                    :style="results.bottleneck === 'per' ? 'color: var(--pico-primary);' : ''"
+                  ></strong>
+                </div>
+                <div>
+                  <small x-text="t('resultPbr')"></small><br>
+                  <strong
+                    x-text="formatNumber(implied.pbr, 2) + 'x'"
+                    :style="results.bottleneck === 'pbr' ? 'color: var(--pico-primary);' : ''"
+                  ></strong>
+                </div>
+                <div>
+                  <small x-text="t('resultYield')"></small><br>
+                  <strong
+                    x-text="formatNumber(implied.yield, 2)"
+                    :style="results.bottleneck === 'yield' ? 'color: var(--pico-primary);' : ''"
+                  ></strong>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
         </article>
       </div>
 
