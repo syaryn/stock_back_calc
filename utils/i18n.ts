@@ -65,44 +65,41 @@ export const dictionary = {
     aboutBtn: "About",
     bottleneckDesc: "Bottleneck Indicator",
     aboutContent: `
-      <h3>指値に意味を持たせませんか？ / Bring Strategic Meaning to Your Limit Orders</h3>
+      <h3>Bring Strategic Meaning to Your Limit Orders</h3>
       <p>
-        「なんとなく」の指値はもう卒業。このツールは、狙っている「理想の利回り」や「割安水準」が具体的にいくらなのかを、財務指標から逆算する投資シミュレーターです。<br>
         Stop guessing your limit orders. This tool is a stock valuation simulator that reverse-engineers the target price from your desired dividend yield and valuation multiples (PER/PBR).
       </p>
 
-      <h3>具体的な活用シーン / Practical Use Cases</h3>
+      <h3>Practical Use Cases</h3>
       <ul>
-        <li><strong>高配当株投資 (Dividend Growth Investing):</strong> 「利回りが4%まで上がったら買いたい」 → 現在の配当金から具体的なターゲット株価を算出します。</li>
-        <li><strong>バリュー投資 (Value Investing):</strong> 「過去平均のPER 15倍で買いたい」 → 企業の収益力（EPS）に基づいた適正価格を特定します。</li>
-        <li><strong>資産価値 (PBR/Asset Value):</strong> 「解散価値であるPBR 1倍を割ったら買いたい」 → 純資産（BPS）に基づいた下値の目処を算出します。</li>
+        <li><strong>Dividend Growth Investing:</strong> "I want to buy when the yield hits 4%." → We calculate the exact price from current dividend data.</li>
+        <li><strong>Value Investing:</strong> "I want to buy at a historical average PER of 15x." → We derive the price from the company's earnings power (EPS).</li>
+        <li><strong>Asset Value (PBR):</strong> "I want to buy below Book Value (PBR 1x)." → We find the floor price based on net assets (BPS).</li>
       </ul>
 
-      <h3>計算ロジック / Calculation Logic</h3>
-      <p>入力された現在値から「予想EPS」「実績BPS」「予想配当金」を内部で算出し、目標値を掛け合わせることで理論株価を導き出します。</p>
+      <h3>Calculation Logic</h3>
+      <p>We reverse-engineer the price using <strong>Expected EPS</strong>, <strong>Actual BPS</strong>, and <strong>Projected Dividend</strong> derived from your current inputs:</p>
       <ul>
         <li><strong>PER Price</strong> = Expected EPS × Target PER</li>
         <li><strong>PBR Price</strong> = Actual BPS × Target PBR</li>
         <li><strong>Yield Price</strong> = Annual Dividend / Target Yield</li>
       </ul>
 
-      <h3>ボトルネックと安全圏 / Bottleneck & Margin of Safety</h3>
+      <h3>Bottleneck & Margin of Safety</h3>
       <p>
-        複数の条件を設定した場合、ツールは「最も低い株価（ボトルネック）」を表示します。これにより、全ての条件をクリアする「安全域（Margin of Safety）」を確保した指値が可能になります。<br>
-        When multiple targets are set, the tool identifies the "Bottleneck Indicator" and displays the lowest price to ensure a solid Margin of Safety.
+        When multiple targets are set, the tool identifies the "Bottleneck Indicator" and displays the lowest price. This ensures a solid "Margin of Safety" by meeting all your criteria.
       </p>
 
-      <h3>計算例 / Example Usage</h3>
-      <p><strong>Example: 株価1,000円、利回り3%の銘柄を、利回り4%の水準で買いたい場合</strong></p>
+      <h3>Example Usage</h3>
+      <p><strong>Example: A stock is $1,000 with a 3% yield. You want to buy it when the yield reaches 4%.</strong></p>
       <ol>
-        <li>現在値の「株価」に <strong>1000</strong>、「現在利回り」に <strong>3</strong> を入力。</li>
-        <li>「目標利回り」スライダーを <strong>4</strong> に設定。</li>
-        <li>算出結果に <strong>750</strong> と表示されます。これがあなたの指値すべき根拠ある価格です。</li>
+        <li>Enter <strong>1000</strong> for Price and <strong>3</strong> for Current Yield.</li>
+        <li>Set Target Yield slider to <strong>4%</strong>.</li>
+        <li>Result: The tool displays <strong>$750</strong>. This is your target limit order price.</li>
       </ol>
       <hr>
       <p style="font-size: 0.8em; color: var(--pico-muted-color);">
-        <strong>免責事項 (Disclaimer):</strong><br>
-        本ツールの計算結果は、入力されたデータに基づく理論値であり、将来の株価や投資成果を保証するものではありません。投資判断は自己責任で行ってください。<br>
+        <strong>Disclaimer:</strong><br>
         The results are theoretical values based on input data and do not guarantee future stock prices or investment outcomes. Please invest at your own risk.
       </p>
     `,
