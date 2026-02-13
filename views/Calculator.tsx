@@ -176,8 +176,8 @@ document.addEventListener('alpine:init', () => {
       <nav>
         <ul>
           <li><strong><span x-text="t('title')">${t(
-    "title",
-  )}</span></strong></li>
+            "title",
+          )}</span></strong></li>
         </ul>
         <ul>
           <li>
@@ -202,7 +202,6 @@ document.addEventListener('alpine:init', () => {
                 />
               </picture>
             </a>
-            </a>
           </li>
           <li>
             <button class="outline" @click="toggleLang" x-text="t('toggleLang')">
@@ -217,13 +216,13 @@ document.addEventListener('alpine:init', () => {
         <!-- Column 1: Inputs (Current Market State) -->
         <article class="card-content">
           <header><h3 x-text="t('currentValues')">${t(
-    "currentValues",
-  )}</h3></header>
+            "currentValues",
+          )}</h3></header>
 
           <label>
             <span x-text="t('stockPrice')">${t("stockPrice")}</span>
             <input type="number" x-model.number="stockPrice" value="${initialState
-      .price ?? ""}">
+              .price ?? ""}">
           </label>
 
           <label>
@@ -260,8 +259,8 @@ document.addEventListener('alpine:init', () => {
         <!-- Column 2: Targets (Sliders + Inputs) -->
         <article class="card-content">
           <header><h3 x-text="t('targetValues')">${t(
-        "targetValues",
-      )}</h3></header>
+            "targetValues",
+          )}</h3></header>
 
           <!-- Target PER -->
           <label>
@@ -359,8 +358,8 @@ document.addEventListener('alpine:init', () => {
                 style="color: var(--pico-muted-color);"
               >
                 <span x-text="t('bottleneckDesc')">${t(
-        "bottleneckDesc",
-      )}</span>:
+                  "bottleneckDesc",
+                )}</span>:
                 <strong x-text="t(results.bottleneck + 'Price')"></strong>
               </small>
             </div>
@@ -386,8 +385,8 @@ document.addEventListener('alpine:init', () => {
                 </div>
                 <div>
                   <small x-text="t('resultYield')">${t(
-        "resultYield",
-      )}</small><br>
+                    "resultYield",
+                  )}</small><br>
                   <strong
                     x-text="formatNumber(implied.yield, 2)"
                     :style="results.bottleneck === 'yield' ? 'color: var(--pico-primary);' : ''"
@@ -404,8 +403,8 @@ document.addEventListener('alpine:init', () => {
         <details>
           <summary x-text="t('aboutTitle')">${t("aboutTitle")}</summary>
           <div x-html="t('aboutContent')">${raw(
-        dictionary["en"].aboutContent,
-      )}</div>
+            dictionary[initialLang].aboutContent,
+          )}</div>
         </details>
       </section>
 

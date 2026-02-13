@@ -100,7 +100,7 @@ export const dictionary = {
         <li>算出結果に <strong>750</strong> と表示されます。これがあなたの指値すべき根拠ある価格です。</li>
       </ol>
       <hr>
-      <p style="font-size: 0.8em; color: #666;">
+      <p style="font-size: 0.8em; color: var(--pico-muted-color);">
         <strong>免責事項 (Disclaimer):</strong><br>
         本ツールの計算結果は、入力されたデータに基づく理論値であり、将来の株価や投資成果を保証するものではありません。投資判断は自己責任で行ってください。<br>
         The results are theoretical values based on input data and do not guarantee future stock prices or investment outcomes. Please invest at your own risk.
