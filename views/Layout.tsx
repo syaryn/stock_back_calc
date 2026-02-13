@@ -19,6 +19,7 @@ export const Layout = (
         <meta name="description" content="${props.description ||
           "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield."}" />
         <title>${props.title || "Stock Target Price Calculator"}</title>
+        <link rel="canonical" href="https://stock-back-calc.syaryn.com/" />
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
         <link
           rel="stylesheet"

@@ -65,15 +65,43 @@ export const dictionary = {
     aboutBtn: "About",
     bottleneckDesc: "Bottleneck Indicator",
     aboutContent: `
-      <p>This tool calculates the theoretical stock price based on your target PER, PBR, and Dividend Yield.</p>
-      <hr>
-      <strong>[Example Usage]</strong><br>
-      "To set a limit order regarding a stock currently at $1000 with 3% yield, targeting a 4% yield"
+      <h3>Bring Strategic Meaning to Your Limit Orders</h3>
+      <p>
+        Stop guessing your limit orders. This tool is a stock valuation simulator that reverse-engineers the target price from your desired dividend yield and valuation multiples (PER/PBR).
+      </p>
+
+      <h3>Practical Use Cases</h3>
+      <ul>
+        <li><strong>Dividend Growth Investing:</strong> "I want to buy when the yield hits 4%." → We calculate the exact price from current dividend data.</li>
+        <li><strong>Value Investing:</strong> "I want to buy at a historical average PER of 15x." → We derive the price from the company's earnings power (EPS).</li>
+        <li><strong>Asset Value (PBR):</strong> "I want to buy below Book Value (PBR 1x)." → We find the floor price based on net assets (BPS).</li>
+      </ul>
+
+      <h3>Calculation Logic</h3>
+      <p>We reverse-engineer the price using <strong>Expected EPS</strong>, <strong>Actual BPS</strong>, and <strong>Projected Dividend</strong> derived from your current inputs:</p>
+      <ul>
+        <li><strong>PER Price</strong> = Expected EPS × Target PER</li>
+        <li><strong>PBR Price</strong> = Actual BPS × Target PBR</li>
+        <li><strong>Yield Price</strong> = Annual Dividend / Target Yield</li>
+      </ul>
+
+      <h3>Bottleneck & Margin of Safety</h3>
+      <p>
+        When multiple targets are set, the tool identifies the "Bottleneck Indicator" and displays the lowest price. This ensures a solid "Margin of Safety" by meeting all your criteria.
+      </p>
+
+      <h3>Example Usage</h3>
+      <p><strong>Example: A stock is $1,000 with a 3% yield. You want to buy it when the yield reaches 4%.</strong></p>
       <ol>
         <li>Enter <strong>1000</strong> for Price and <strong>3</strong> for Current Yield.</li>
-        <li>Set the Target Yield slider to <strong>4</strong>.</li>
-        <li>The calculated Target Price <strong>$750</strong> will be displayed.</li>
+        <li>Set Target Yield slider to <strong>4%</strong>.</li>
+        <li>Result: The tool displays <strong>$750</strong>. This is your target limit order price.</li>
       </ol>
+      <hr>
+      <p style="font-size: 0.8em; color: var(--pico-muted-color);">
+        <strong>Disclaimer:</strong><br>
+        The results are theoretical values based on input data and do not guarantee future stock prices or investment outcomes. Please invest at your own risk.
+      </p>
     `,
     close: "Close",
   },
@@ -113,17 +141,35 @@ export const dictionary = {
     aboutTitle: "このサイトについて",
     aboutBtn: "使い方",
     aboutContent: `
-      <p>目標とするPER、PBR、配当利回りから、理論的な株価を逆算するツールです。</p>
-      <p>現在の株価と財務指標を入力し、目標指標を調整することで、全ての条件を満たす株価（最も保守的な算出結果）を表示します。</p>
+      <h3>指値に意味を持たせませんか？</h3>
+      <p>「なんとなく」の指値はもう卒業。このツールは、あなたが狙っている「理想の利回り」や「割安水準」が具体的にいくらなのかを、財務指標から逆算する投資シミュレーターです。</p>
+
+      <h4>具体的な活用シーン</h4>
+      <ul>
+        <li><strong>高配当株投資:</strong> 「利回りが4%まで上がったら（株価が下がったら）買いたい」 &rarr; 現在の配当金から具体的なターゲット株価を算出します。</li>
+        <li><strong>バリュー投資:</strong> 「過去平均のPER 15倍で買いたい」 &rarr; 企業の収益力（EPS）に基づいた適正価格を特定します。</li>
+        <li><strong>資産価値（PBR）:</strong> 「解散価値であるPBR 1倍を割ったら買いたい」 &rarr; 純資産（BPS）に基づいた下値の目処を算出します。</li>
+      </ul>
+
+      <h4>計算ロジック (Calculation Logic)</h4>
+      <p>入力された現在値から「予想EPS」「実績BPS」「予想配当金」を内部で算出し、それらに目標値を掛け合わせています。</p>
+      <ul>
+        <li><strong>PER基準価格</strong> = <code>予想EPS × 目標PER</code></li>
+        <li><strong>PBR基準価格</strong> = <code>実績BPS × 目標PBR</code></li>
+        <li><strong>利回り基準価格</strong> = <code>予想配当金 ÷ 目標利回り</code></li>
+      </ul>
+
+      <h4>ボトルネック（制約要因）と安全圏</h4>
+      <p>複数の条件を設定した場合、ツールは<strong>「最も低い株価（ボトルネック）」</strong>を算出結果として表示します。これにより、全ての条件をクリアする<strong>「安全域（Margin of Safety）」</strong>を確保した指値が可能になります。</p>
+
       <hr>
-      <strong>【使い方例】</strong><br>
-      「株価1000円で現在の利回りが3%の銘柄を、利回りが4%になるように指値を設定したい」場合
+      <h4>計算例</h4>
+      <p><strong>例:</strong> 株価1,000円、利回り3%の銘柄を、利回り4%の水準で買いたい場合</p>
       <ol>
         <li>現在値入力欄の「株価」に <strong>1000</strong>、「現在利回り」に <strong>3</strong> を入力します。</li>
         <li>目標指標の「目標利回り」スライダーを動かして <strong>4</strong> に設定します。</li>
-        <li>算出結果に <strong>750</strong> (円) と表示されます。</li>
+        <li>算出結果に <strong>750</strong> (円) と表示されます。これがあなたの指値すべき価格です。</li>
       </ol>
-      <p>これが、利回り4%になるための指値価格です。</p>
     `,
     close: "閉じる",
   },

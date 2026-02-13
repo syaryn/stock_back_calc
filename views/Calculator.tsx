@@ -33,7 +33,6 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('calculator', () => ({
     lang: '${initialLang}',
     dict: dictionaryData,
-    showAbout: false,
 
     // Market State Inputs (Default to null if not provided)
     stockPrice: ${initialState.price ?? "null"},
@@ -182,13 +181,27 @@ document.addEventListener('alpine:init', () => {
         </ul>
         <ul>
           <li>
-            <button
-              class="secondary outline"
-              @click="showAbout = true"
-              x-text="t('aboutBtn')"
+            <a
+              href="https://github.com/syaryn/stock_back_calc"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contrast"
+              aria-label="GitHub Repository"
+              style="display: flex; align-items: center;"
             >
-              ${t("aboutBtn")}
-            </button>
+              <picture>
+                <source
+                  srcset="/GitHub_Invertocat_White_Clearspace.svg"
+                  media="(prefers-color-scheme: dark)"
+                />
+                <img
+                  src="/GitHub_Invertocat_Black_Clearspace.svg"
+                  alt="GitHub"
+                  width="48"
+                  height="48"
+                />
+              </picture>
+            </a>
           </li>
           <li>
             <button class="outline" @click="toggleLang" x-text="t('toggleLang')">
@@ -197,20 +210,6 @@ document.addEventListener('alpine:init', () => {
           </li>
         </ul>
       </nav>
-
-      <!-- About Modal -->
-      <dialog :open="showAbout">
-        <article>
-          <header>
-            <button aria-label="Close" rel="prev" @click="showAbout = false">
-            </button>
-            <p>
-              <strong x-text="t('aboutTitle')">${t("aboutTitle")}</strong>
-            </p>
-          </header>
-          <div x-html="t('aboutContent')">${raw(t("aboutContent"))}</div>
-        </article>
-      </dialog>
 
       <!-- Main Grid Layout -->
       <div class="responsive-grid">
@@ -398,6 +397,16 @@ document.addEventListener('alpine:init', () => {
           </template>
         </article>
       </div>
+
+      <!-- SEO Content / Usage Guide (Accordion) -->
+      <section style="margin-top: 2rem;">
+        <details>
+          <summary x-text="t('aboutTitle')">${t("aboutTitle")}</summary>
+          <div x-html="t('aboutContent')">${raw(
+            dictionary[initialLang].aboutContent,
+          )}</div>
+        </details>
+      </section>
 
       <script>
       ${raw(script)}
