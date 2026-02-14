@@ -17,7 +17,7 @@ modern, lightweight web applications using the following stack:
 ## When to use this skill
 
 - Setting up a new web project with the Deno/Hono stack.
-- implementing server-side rendering (SSR) with Hono's JSX middleware.
+- Implementing server-side rendering (SSR) with Hono's JSX middleware.
 - Adding dynamic behavior using Htmx attributes (`hx-get`, `hx-post`, etc.).
 - Creating client-side interactivity with Alpine.js (`x-data`, `x-on`, etc.).
 - Configuring development tasks and git hooks.

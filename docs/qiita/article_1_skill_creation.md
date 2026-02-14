@@ -68,7 +68,7 @@ description: Expert assistance for developing web applications using Deno, Hono,
 ## When to use this skill
 
 - Setting up a new web project with the Deno/Hono stack.
-- implementing server-side rendering (SSR) with Hono's JSX middleware.
+- Implementing server-side rendering (SSR) with Hono's JSX middleware.
 
 ## Quick Start (New Project)
 
