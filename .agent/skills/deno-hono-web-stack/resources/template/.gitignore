@@ -1,0 +1,7 @@
+.DS_Store
+cov_profile
+coverage
+lcov.info
+node_modules
+npm-debug.log
+.env
