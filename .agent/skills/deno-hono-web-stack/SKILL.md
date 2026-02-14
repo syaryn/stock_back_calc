@@ -38,7 +38,7 @@ To create a new project using the bundled template:
 
 Maintain a clean separation of concerns:
 
-```
+```text
 /
 ├── deno.json        # Deno Configuration
 ├── mise.toml        # Tool Versions & High-level Tasks

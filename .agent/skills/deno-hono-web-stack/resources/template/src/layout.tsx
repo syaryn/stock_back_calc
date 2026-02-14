@@ -1,6 +1,12 @@
 import { html } from "@hono/hono/html";
 
-export const Layout = ({ children, title }) => {
+export const Layout = ({
+  children,
+  title,
+}: {
+  children?: unknown;
+  title?: string;
+}) => {
   return html`
     <!DOCTYPE html>
     <html lang="en">
