@@ -1,0 +1,9 @@
+[tools]
+deno = "latest"
+# lefthook = "latest" # Optional: if you prefer the binary over JSR
+
+[tasks]
+dev = { run = "deno task dev", description = "Run development server" }
+test = { run = "deno task test", description = "Run tests" }
+hook = { run = "deno task hook", description = "Install git hooks" }
+start = { run = "deno task start", description = "Start production server" }

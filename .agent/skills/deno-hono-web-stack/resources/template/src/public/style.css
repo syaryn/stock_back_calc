@@ -1,0 +1,8 @@
+/* Custom styles overriding or augmenting Pico CSS */
+:root {
+  --pico-font-size: 100%;
+}
+
+main {
+  padding-top: 2rem;
+}
