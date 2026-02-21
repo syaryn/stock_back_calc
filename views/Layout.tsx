@@ -7,13 +7,22 @@ export const Layout = (
     title: string;
     description?: string;
     lang?: string;
+    queryParams?: Record<string, string>;
     children?: Child;
   },
 ) => {
   const title = props.title || "Stock Target Price Calculator";
   const description = props.description ||
     "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
-  const canonicalUrl = "https://stock-back-calc.syaryn.com/";
+  const baseUrl = "https://stock-back-calc.syaryn.com/";
+
+  // Construct the canonical URL preserving the language parameter if needed
+  let currentUrl = baseUrl;
+  if (props.lang && props.lang !== "en") {
+    currentUrl = `${baseUrl}?lang=${props.lang}`;
+  } else if (props.lang === "en") {
+    currentUrl = `${baseUrl}?lang=en`;
+  }
 
   return html`
     <!DOCTYPE html>
@@ -23,24 +32,24 @@ export const Layout = (
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${description}" />
         <title>${title}</title>
-        <link rel="canonical" href="${canonicalUrl}" />
-        <link rel="alternate" hreflang="en" href="${canonicalUrl}?lang=en" />
-        <link rel="alternate" hreflang="ja" href="${canonicalUrl}?lang=ja" />
-        <link rel="alternate" hreflang="x-default" href="${canonicalUrl}" />
+        <link rel="canonical" href="${currentUrl}" />
+        <link rel="alternate" hreflang="en" href="${baseUrl}?lang=en" />
+        <link rel="alternate" hreflang="ja" href="${baseUrl}?lang=ja" />
+        <link rel="alternate" hreflang="x-default" href="${baseUrl}" />
 
         <!-- Open Graph -->
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${description}" />
-        <meta property="og:url" content="${canonicalUrl}" />
-        <meta property="og:image" content="${canonicalUrl}og-image.png" />
+        <meta property="og:url" content="${currentUrl}" />
+        <meta property="og:image" content="${baseUrl}og-image.png" />
         <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="${title}" />
+        <meta property="og:site_name" content="Stock Target Price Calculator" />
 
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="${title}" />
         <meta name="twitter:description" content="${description}" />
-        <meta name="twitter:image" content="${canonicalUrl}og-image.png" />
+        <meta name="twitter:image" content="${baseUrl}og-image.png" />
 
         <!-- JSON-LD Structured Data -->
         <script type="application/ld+json">
@@ -48,9 +57,9 @@ export const Layout = (
           "@context": "https://schema.org",
           "@type": "WebApplication",
           "name": "${title}",
-          "url": "${canonicalUrl}",
+          "url": "${currentUrl}",
           "description": "${description}",
-          "image": "${canonicalUrl}og-image.png",
+          "image": "${baseUrl}og-image.png",
           "applicationCategory": "FinanceApplication",
           "operatingSystem": "All",
           "inLanguage": ["en", "ja"],

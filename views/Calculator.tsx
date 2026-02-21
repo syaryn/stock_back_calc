@@ -10,16 +10,21 @@ interface CalculatorProps {
   lang: Language;
   initialState?: Partial<MarketState>;
   initialTargets?: { per?: number; pbr?: number; yield?: number };
+  queryParams?: Record<string, string>;
 }
 
 export const Calculator = (props: CalculatorProps) => {
-  const initialLang = props.lang;
-  const initialState = props.initialState || {};
-  const initialTargets = props.initialTargets || {};
+  const { lang, initialState = {}, initialTargets = {}, queryParams = {} } =
+    props;
+  const initialLang = lang && (lang === "ja" || lang === "en") ? lang : "en";
+  const t = (key: string) =>
+    dictionary[initialLang][key as keyof typeof dictionary.en] || key;
 
-  const t = (key: keyof typeof dictionary["en"]) => {
-    return dictionary[initialLang][key] || dictionary["en"][key] || key;
-  };
+  // Construct SSR fallback href preserving other query params
+  const targetLang = initialLang === "en" ? "ja" : "en";
+  const fallbackParams = new URLSearchParams(queryParams);
+  fallbackParams.set("lang", targetLang);
+  const fallbackHref = `?${fallbackParams.toString()}`;
 
   const dictJson = JSON.stringify(dictionary);
 
@@ -216,7 +221,7 @@ document.addEventListener('alpine:init', () => {
             <a
               class="outline"
               role="button"
-              href="?lang=${initialLang === "en" ? "ja" : "en"}"
+              href="${fallbackHref}"
               :href="getLangSwitchUrl()"
               x-text="t('toggleLang')"
             >

@@ -82,11 +82,14 @@ app.get("/", (c) => {
     <Layout
       title={dictionary[lang].title}
       description={dictionary[lang].description}
+      lang={lang}
+      queryParams={query}
     >
       <Calculator
         lang={lang}
         initialState={initialState}
         initialTargets={initialTargets}
+        queryParams={query}
       />
     </Layout>,
   );
