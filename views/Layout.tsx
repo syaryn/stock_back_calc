@@ -16,11 +16,12 @@ export const Layout = (
     "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
   const baseUrl = "https://stock-back-calc.syaryn.com/";
 
-  // Construct the canonical URL preserving the language parameter if needed
+  // Construct the canonical URL preserving the explicit language parameter if needed
   let currentUrl = baseUrl;
-  if (props.lang && props.lang !== "en") {
-    currentUrl = `${baseUrl}?lang=${props.lang}`;
-  } else if (props.lang === "en") {
+  const explicitLang = props.queryParams?.lang || props.lang;
+  if (explicitLang && explicitLang !== "en") {
+    currentUrl = `${baseUrl}?lang=${explicitLang}`;
+  } else if (explicitLang === "en") {
     currentUrl = `${baseUrl}?lang=en`;
   }
 
@@ -77,7 +78,7 @@ export const Layout = (
 
         <!-- JSON-LD Structured Data -->
         <script type="application/ld+json">
-        ${raw(JSON.stringify(ldJson))}
+        ${raw(JSON.stringify(ldJson).replace(/\//g, "\\/"))}
         </script>
 
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
