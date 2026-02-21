@@ -17,6 +17,7 @@ Sitemap: https://stock-back-calc.syaryn.com/sitemap.xml`,
 });
 
 app.get("/sitemap.xml", (c) => {
+  const today = new Date().toISOString().split("T")[0];
   c.header("Content-Type", "application/xml; charset=utf-8");
   return c.body(
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -26,7 +27,7 @@ app.get("/sitemap.xml", (c) => {
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -35,7 +36,7 @@ app.get("/sitemap.xml", (c) => {
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -44,7 +45,7 @@ app.get("/sitemap.xml", (c) => {
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
     <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
-    <lastmod>2026-02-21</lastmod>
+    <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

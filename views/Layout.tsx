@@ -1,4 +1,4 @@
-import { html } from "hono/html";
+import { html, raw } from "hono/html";
 
 import { Child } from "hono/jsx";
 
@@ -23,6 +23,30 @@ export const Layout = (
   } else if (props.lang === "en") {
     currentUrl = `${baseUrl}?lang=en`;
   }
+
+  const ldJson = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": title,
+    "url": currentUrl,
+    "description": description,
+    "image": `${baseUrl}og-image.png`,
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "inLanguage": ["en", "ja"],
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+    },
+    "featureList": [
+      "PER-based target price calculation",
+      "PBR-based target price calculation",
+      "Dividend yield-based target price calculation",
+      "Bottleneck indicator detection",
+      "Margin of safety analysis",
+    ],
+  };
 
   return html`
     <!DOCTYPE html>
@@ -53,29 +77,7 @@ export const Layout = (
 
         <!-- JSON-LD Structured Data -->
         <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "WebApplication",
-          "name": "${title}",
-          "url": "${currentUrl}",
-          "description": "${description}",
-          "image": "${baseUrl}og-image.png",
-          "applicationCategory": "FinanceApplication",
-          "operatingSystem": "All",
-          "inLanguage": ["en", "ja"],
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
-          },
-          "featureList": [
-            "PER-based target price calculation",
-            "PBR-based target price calculation",
-            "Dividend yield-based target price calculation",
-            "Bottleneck indicator detection",
-            "Margin of safety analysis"
-          ]
-        }
+        ${raw(JSON.stringify(ldJson))}
         </script>
 
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
