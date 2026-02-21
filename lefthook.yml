@@ -7,3 +7,5 @@ pre-commit:
     fmt:
       glob: "*.ts"
       run: mise exec -- deno fmt --check {staged_files}
+    audit:
+      run: mise exec -- deno audit

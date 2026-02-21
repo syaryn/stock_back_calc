@@ -10,16 +10,65 @@ export const Layout = (
     children?: Child;
   },
 ) => {
+  const title = props.title || "Stock Target Price Calculator";
+  const description = props.description ||
+    "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
+  const canonicalUrl = "https://stock-back-calc.syaryn.com/";
+
   return html`
     <!DOCTYPE html>
     <html lang="${props.lang || "en"}">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="${props.description ||
-          "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield."}" />
-        <title>${props.title || "Stock Target Price Calculator"}</title>
-        <link rel="canonical" href="https://stock-back-calc.syaryn.com/" />
+        <meta name="description" content="${description}" />
+        <title>${title}</title>
+        <link rel="canonical" href="${canonicalUrl}" />
+        <link rel="alternate" hreflang="en" href="${canonicalUrl}?lang=en" />
+        <link rel="alternate" hreflang="ja" href="${canonicalUrl}?lang=ja" />
+        <link rel="alternate" hreflang="x-default" href="${canonicalUrl}" />
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="${title}" />
+        <meta property="og:description" content="${description}" />
+        <meta property="og:url" content="${canonicalUrl}" />
+        <meta property="og:image" content="${canonicalUrl}og-image.png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="${title}" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="${title}" />
+        <meta name="twitter:description" content="${description}" />
+        <meta name="twitter:image" content="${canonicalUrl}og-image.png" />
+
+        <!-- JSON-LD Structured Data -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          "name": "${title}",
+          "url": "${canonicalUrl}",
+          "description": "${description}",
+          "image": "${canonicalUrl}og-image.png",
+          "applicationCategory": "FinanceApplication",
+          "operatingSystem": "All",
+          "inLanguage": ["en", "ja"],
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "featureList": [
+            "PER-based target price calculation",
+            "PBR-based target price calculation",
+            "Dividend yield-based target price calculation",
+            "Bottleneck indicator detection",
+            "Margin of safety analysis"
+          ]
+        }
+        </script>
+
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
         <link
           rel="stylesheet"
@@ -49,6 +98,7 @@ export const Layout = (
           sizes="512x512"
           href="/android-chrome-512x512.png"
         />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ffffff" />
         <style>
         /* Custom styles for mobile responsiveness */

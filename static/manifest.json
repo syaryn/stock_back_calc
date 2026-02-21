@@ -1,6 +1,6 @@
 {
-  "name": "Your App Name",
-  "short_name": "Your App",
+  "name": "Stock Target Price Calculator",
+  "short_name": "StockCalc",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
