@@ -30,9 +30,9 @@ export function detectLanguage(acceptLanguageHeader: string | null): Language {
 
 export const dictionary = {
   en: {
-    title: "Stock Target Price Calculator",
+    title: "Stock Target Price Calculator - PER, PBR & Dividend Yield",
     description:
-      "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A simple tool for value investors.",
+      "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.",
     currentValues: "Current Values",
     targetValues: "Target Indicators",
     results: "Target Prices",
@@ -65,19 +65,19 @@ export const dictionary = {
     aboutBtn: "About",
     bottleneckDesc: "Bottleneck Indicator",
     aboutContent: `
-      <h3>Bring Strategic Meaning to Your Limit Orders</h3>
+      <h3>Bring Strategic Meaning to Your Stock Limit Orders</h3>
       <p>
         Stop guessing your limit orders. This tool is a stock valuation simulator that reverse-engineers the target price from your desired dividend yield and valuation multiples (PER/PBR).
       </p>
 
-      <h3>Practical Use Cases</h3>
+      <h3>Target Price Use Cases: Dividend & Value Investing</h3>
       <ul>
         <li><strong>Dividend Growth Investing:</strong> "I want to buy when the yield hits 4%." → We calculate the exact price from current dividend data.</li>
         <li><strong>Value Investing:</strong> "I want to buy at a historical average PER of 15x." → We derive the price from the company's earnings power (EPS).</li>
         <li><strong>Asset Value (PBR):</strong> "I want to buy below Book Value (PBR 1x)." → We find the floor price based on net assets (BPS).</li>
       </ul>
 
-      <h3>Calculation Logic</h3>
+      <h3>PER, PBR & Dividend Yield Calculation Logic</h3>
       <p>We reverse-engineer the price using <strong>Expected EPS</strong>, <strong>Actual BPS</strong>, and <strong>Projected Dividend</strong> derived from your current inputs:</p>
       <ul>
         <li><strong>PER Price</strong> = Expected EPS × Target PER</li>
@@ -85,12 +85,12 @@ export const dictionary = {
         <li><strong>Yield Price</strong> = Annual Dividend / Target Yield</li>
       </ul>
 
-      <h3>Bottleneck & Margin of Safety</h3>
+      <h3>Bottleneck Indicator &amp; Margin of Safety Analysis</h3>
       <p>
         When multiple targets are set, the tool identifies the "Bottleneck Indicator" and displays the lowest price. This ensures a solid "Margin of Safety" by meeting all your criteria.
       </p>
 
-      <h3>Example Usage</h3>
+      <h3>Stock Price Calculation Example for Investment Strategy</h3>
       <p><strong>Example: A stock is $1,000 with a 3% yield. You want to buy it when the yield reaches 4%.</strong></p>
       <ol>
         <li>Enter <strong>1000</strong> for Price and <strong>3</strong> for Current Yield.</li>
@@ -106,9 +106,9 @@ export const dictionary = {
     close: "Close",
   },
   ja: {
-    title: "目標株価逆算ツール",
+    title: "目標株価逆算ツール - PER・PBR・配当利回りから理論株価を計算",
     description:
-      "目標とするPER、PBR、配当利回りから理論株価を逆算するツールです。バリュー投資家向けのシミュレーションに最適。",
+      "目標とするPER、PBR、配当利回りから理論株価を逆算する無料ツールです。バリュー投資家向けの株価シミュレーターに最適。",
     currentValues: "現在値",
     targetValues: "目標指標",
     results: "算出結果",
@@ -144,14 +144,14 @@ export const dictionary = {
       <h3>指値に意味を持たせませんか？</h3>
       <p>「なんとなく」の指値はもう卒業。このツールは、あなたが狙っている「理想の利回り」や「割安水準」が具体的にいくらなのかを、財務指標から逆算する投資シミュレーターです。</p>
 
-      <h4>具体的な活用シーン</h4>
+      <h4>目標株価の活用シーン：高配当株・バリュー投資</h4>
       <ul>
         <li><strong>高配当株投資:</strong> 「利回りが4%まで上がったら（株価が下がったら）買いたい」 &rarr; 現在の配当金から具体的なターゲット株価を算出します。</li>
         <li><strong>バリュー投資:</strong> 「過去平均のPER 15倍で買いたい」 &rarr; 企業の収益力（EPS）に基づいた適正価格を特定します。</li>
         <li><strong>資産価値（PBR）:</strong> 「解散価値であるPBR 1倍を割ったら買いたい」 &rarr; 純資産（BPS）に基づいた下値の目処を算出します。</li>
       </ul>
 
-      <h4>計算ロジック (Calculation Logic)</h4>
+      <h4>PER・PBR・配当利回りの計算ロジック</h4>
       <p>入力された現在値から「予想EPS」「実績BPS」「予想配当金」を内部で算出し、それらに目標値を掛け合わせています。</p>
       <ul>
         <li><strong>PER基準価格</strong> = <code>予想EPS × 目標PER</code></li>
@@ -159,11 +159,11 @@ export const dictionary = {
         <li><strong>利回り基準価格</strong> = <code>予想配当金 ÷ 目標利回り</code></li>
       </ul>
 
-      <h4>ボトルネック（制約要因）と安全圏</h4>
+      <h4>ボトルネック指標と安全域（Margin of Safety）</h4>
       <p>複数の条件を設定した場合、ツールは<strong>「最も低い株価（ボトルネック）」</strong>を算出結果として表示します。これにより、全ての条件をクリアする<strong>「安全域（Margin of Safety）」</strong>を確保した指値が可能になります。</p>
 
       <hr>
-      <h4>計算例</h4>
+      <h4>株価逆算の計算例</h4>
       <p><strong>例:</strong> 株価1,000円、利回り3%の銘柄を、利回り4%の水準で買いたい場合</p>
       <ol>
         <li>現在値入力欄の「株価」に <strong>1000</strong>、「現在利回り」に <strong>3</strong> を入力します。</li>

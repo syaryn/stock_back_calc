@@ -10,16 +10,21 @@ interface CalculatorProps {
   lang: Language;
   initialState?: Partial<MarketState>;
   initialTargets?: { per?: number; pbr?: number; yield?: number };
+  queryParams?: Record<string, string>;
 }
 
 export const Calculator = (props: CalculatorProps) => {
-  const initialLang = props.lang;
-  const initialState = props.initialState || {};
-  const initialTargets = props.initialTargets || {};
+  const { lang, initialState = {}, initialTargets = {}, queryParams = {} } =
+    props;
+  const initialLang = lang && (lang === "ja" || lang === "en") ? lang : "en";
+  const t = (key: string) =>
+    dictionary[initialLang][key as keyof typeof dictionary.en] || key;
 
-  const t = (key: keyof typeof dictionary["en"]) => {
-    return dictionary[initialLang][key] || dictionary["en"][key] || key;
-  };
+  // Construct SSR fallback href preserving other query params
+  const targetLang = initialLang === "en" ? "ja" : "en";
+  const fallbackParams = new URLSearchParams(queryParams);
+  fallbackParams.set("lang", targetLang);
+  const fallbackHref = `?${fallbackParams.toString()}`;
 
   const dictJson = JSON.stringify(dictionary);
 
@@ -88,8 +93,11 @@ document.addEventListener('alpine:init', () => {
       return this.dict[this.lang][key] || this.dict['en'][key] || key
     },
 
-    toggleLang() {
-      this.lang = this.lang === 'en' ? 'ja' : 'en'
+    getLangSwitchUrl() {
+      const nextLang = this.lang === 'en' ? 'ja' : 'en';
+      const params = new URLSearchParams(window.location.search);
+      params.set('lang', nextLang);
+      return window.location.pathname + '?' + params.toString();
     },
 
     formatCurrency(val) {
@@ -163,6 +171,8 @@ document.addEventListener('alpine:init', () => {
       if (this.targetPbr) params.set('targetPbr', this.targetPbr);
       if (this.targetYield) params.set('targetYield', this.targetYield);
 
+      params.set('lang', this.lang);
+
       const newUrl = window.location.pathname + '?' + params.toString();
       window.history.replaceState({}, '', newUrl);
     }
@@ -175,9 +185,13 @@ document.addEventListener('alpine:init', () => {
       <!-- Header with Language Toggle -->
       <nav>
         <ul>
-          <li><strong><span x-text="t('title')">${t(
-            "title",
-          )}</span></strong></li>
+          <li>
+            <h1 style="font-size: 1rem; margin: 0;">
+              <span x-text="t('title')">${t(
+                "title",
+              )}</span>
+            </h1>
+          </li>
         </ul>
         <ul>
           <li>
@@ -204,9 +218,15 @@ document.addEventListener('alpine:init', () => {
             </a>
           </li>
           <li>
-            <button class="outline" @click="toggleLang" x-text="t('toggleLang')">
+            <a
+              class="outline"
+              role="button"
+              href="${fallbackHref}"
+              :href="getLangSwitchUrl()"
+              x-text="t('toggleLang')"
+            >
               ${t("toggleLang")}
-            </button>
+            </a>
           </li>
         </ul>
       </nav>
@@ -215,9 +235,9 @@ document.addEventListener('alpine:init', () => {
       <div class="responsive-grid">
         <!-- Column 1: Inputs (Current Market State) -->
         <article class="card-content">
-          <header><h3 x-text="t('currentValues')">${t(
+          <header><h2 x-text="t('currentValues')">${t(
             "currentValues",
-          )}</h3></header>
+          )}</h2></header>
 
           <label>
             <span x-text="t('stockPrice')">${t("stockPrice")}</span>
@@ -258,9 +278,9 @@ document.addEventListener('alpine:init', () => {
 
         <!-- Column 2: Targets (Sliders + Inputs) -->
         <article class="card-content">
-          <header><h3 x-text="t('targetValues')">${t(
+          <header><h2 x-text="t('targetValues')">${t(
             "targetValues",
-          )}</h3></header>
+          )}</h2></header>
 
           <!-- Target PER -->
           <label>
@@ -337,7 +357,7 @@ document.addEventListener('alpine:init', () => {
 
         <!-- Column 3: Results -->
         <article class="card-content">
-          <header><h3 x-text="t('results')">${t("results")}</h3></header>
+          <header><h2 x-text="t('results')">${t("results")}</h2></header>
 
           <!-- Final Result (Minimum Price) -->
           <div
@@ -398,14 +418,11 @@ document.addEventListener('alpine:init', () => {
         </article>
       </div>
 
-      <!-- SEO Content / Usage Guide (Accordion) -->
+      <!-- About Content (visible for SEO and usability) -->
       <section style="margin-top: 2rem;">
-        <details>
-          <summary x-text="t('aboutTitle')">${t("aboutTitle")}</summary>
-          <div x-html="t('aboutContent')">${raw(
-            dictionary[initialLang].aboutContent,
-          )}</div>
-        </details>
+        <div x-html="t('aboutContent')">${raw(
+          dictionary[initialLang].aboutContent,
+        )}</div>
       </section>
 
       <script>
