@@ -1,6 +1,7 @@
 import { html, raw } from "hono/html";
 
 import { Child } from "hono/jsx";
+import { dictionary } from "../utils/i18n.ts";
 
 export const Layout = (
   props: {
@@ -45,109 +46,20 @@ export const Layout = (
     ],
   };
 
-  const faqJson = isJa
-    ? {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "目標株価とは何ですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "目標株価とは、投資家が「この価格なら買いたい」と考える基準価格のことです。PER（株価収益率）・PBR（株価純資産倍率）・配当利回りなどの財務指標をもとに計算することで、感覚ではなく根拠のある指値を設定できます。",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "PERとPBRの違いは何ですか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "PER（Price Earnings Ratio）は企業の「稼ぐ力（EPS）」に基準を置いた割安度指標です。PBR（Price Book-value Ratio）は企業の「純資産（BPS）」に基準を置いた指標で、PBR1倍以下は解散価値割れとも言われます。",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "配当利回りを基準に株価を計算するメリットは？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "配当利回りを基準にすると「このくらいの利回りになったら買いたい」という明確な基準で目標株価を設定できます。例えば、利回り3%の銘柄を「4%になったら買う」と決めれば、ツールが自動で目標株価を算出します。",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "このツールは無料で使えますか？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "はい、完全無料でご利用いただけます。登録不要で、すべての機能をそのままご利用いただけます。",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "EPSとPERから目標株価を計算するには？",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "現在の株価と現在PERを入力すると、ツールが内部でEPS（= 株価 ÷ 現在PER）を計算します。次に目標PERを設定すれば、目標株価 = EPS × 目標PER が自動で算出されます。",
-          },
-        },
-      ],
-    }
-    : {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "What is a stock target price?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "A stock target price is a calculated price at which an investor would consider buying a stock. By using financial metrics like PER (Price-to-Earnings Ratio), PBR (Price-to-Book Ratio), and dividend yield, investors can set data-driven limit orders instead of arbitrary ones.",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "What is the difference between PER and PBR?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "PER (Price-to-Earnings Ratio) measures how expensive a stock is relative to a company's earnings power (EPS). PBR (Price-to-Book Ratio) measures a stock's price relative to its net assets (BPS). A PBR below 1x is generally considered undervalued relative to book value.",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "What is the advantage of using dividend yield as a target?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "Setting a target dividend yield gives you a clear, actionable buy price. For example, if a stock yields 3% and you want to buy it at a 4% yield, this tool instantly calculates the exact price you need to place your limit order at.",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "Is this tool free to use?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "Yes, this tool is completely free to use. No registration is required, and all features are available without any cost.",
-          },
-        },
-        {
-          "@type": "Question",
-          "name": "How do I calculate a target stock price using EPS and PER?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text":
-              "Enter the current stock price and current PER. The tool will derive the implied EPS (= Stock Price / Current PER). Then set your Target PER, and the tool will calculate: Target Price = EPS × Target PER.",
-          },
-        },
-      ],
-    };
+  const currentDict = isJa ? dictionary.ja : dictionary.en;
+
+  const faqJson = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": currentDict.faq.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a,
+      },
+    })),
+  };
 
   return html`
     <!DOCTYPE html>
