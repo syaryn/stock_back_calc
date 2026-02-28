@@ -28,6 +28,68 @@ export function detectLanguage(acceptLanguageHeader: string | null): Language {
   return i18nConfig.defaultLocale;
 }
 
+export const enFaqs = [
+  {
+    q: "What is a stock target price?",
+    a: "A stock target price is a calculated price at which an investor would consider buying a stock. By using financial metrics like PER (Price-to-Earnings Ratio), PBR (Price-to-Book Ratio), and dividend yield, investors can set data-driven limit orders instead of arbitrary ones.",
+  },
+  {
+    q: "What is the difference between PER and PBR?",
+    a: "PER (Price-to-Earnings Ratio) measures how expensive a stock is relative to a company's earnings power (EPS). PBR (Price-to-Book Ratio) measures a stock's price relative to its net assets (BPS). A PBR below 1x is generally considered undervalued relative to book value.",
+  },
+  {
+    q: "What is the advantage of using dividend yield as a target?",
+    a: "Setting a target dividend yield gives you a clear, actionable buy price. For example, if a stock yields 3% and you want to buy it at a 4% yield, this tool instantly calculates the exact price you need to place your limit order at.",
+  },
+  {
+    q: "Is this tool free to use?",
+    a: "Yes, this tool is completely free to use. No registration is required, and all features are available without any cost.",
+  },
+  {
+    q: "How do I calculate a target stock price using EPS and PER?",
+    a: "Enter the current stock price and current PER. The tool will derive the implied EPS (= Stock Price / Current PER). Then set your Target PER, and the tool will calculate: Target Price = EPS × Target PER.",
+  },
+];
+
+export const jaFaqs = [
+  {
+    q: "目標株価とは何ですか？",
+    a: "目標株価とは、投資家が「この価格なら買いたい」と考える基準価格のことです。PER（株価収益率）・PBR（株価純資産倍率）・配当利回りなどの財務指標をもとに計算することで、感覚ではなく根拠のある指値を設定できます。",
+  },
+  {
+    q: "PERとPBRの違いは何ですか？",
+    a: "PER（Price Earnings Ratio）は企業の「稼ぐ力（EPS）」に基準を置いた割安度指標です。PBR（Price Book-value Ratio）は企業の「純資産（BPS）」に基準を置いた指標で、PBR1倍以下は解散価値割れとも言われます。",
+  },
+  {
+    q: "配当利回りを基準に株価を計算するメリットは？",
+    a: "配当利回りを基準にすると「このくらいの利回りになったら買いたい」という明確な基準で目標株価を設定できます。例えば、利回り3%の銘柄を「4%になったら買う」と決めれば、ツールが自動で目標株価を算出します。",
+  },
+  {
+    q: "このツールは無料で使えますか？",
+    a: "はい、完全無料でご利用いただけます。登録不要で、すべての機能をそのままご利用いただけます。",
+  },
+  {
+    q: "EPSとPERから目標株価を計算するには？",
+    a: "現在の株価と現在PERを入力すると、ツールが内部でEPS（= 株価 ÷ 現在PER）を計算します。次に目標PERを設定すれば、目標株価 = EPS × 目標PER が自動で算出されます。",
+  },
+];
+
+function buildFaqHtml(title: string, faqs: { q: string; a: string }[]) {
+  return `
+      <h3>${title}</h3>
+${
+    faqs
+      .map(
+        (faq) =>
+          `      <details>
+        <summary><strong>${faq.q}</strong></summary>
+        <p>${faq.a}</p>
+      </details>`,
+      )
+      .join("\n")
+  }`;
+}
+
 export const dictionary = {
   en: {
     title: "Stock Target Price Calculator - PER, PBR & Dividend Yield",
@@ -64,6 +126,7 @@ export const dictionary = {
     aboutTitle: "About this tool",
     aboutBtn: "About",
     bottleneckDesc: "Bottleneck Indicator",
+    faq: enFaqs,
     aboutContent: `
       <h3>Bring Strategic Meaning to Your Stock Limit Orders</h3>
       <p>
@@ -97,6 +160,8 @@ export const dictionary = {
         <li>Set Target Yield slider to <strong>4%</strong>.</li>
         <li>Result: The tool displays <strong>$750</strong>. This is your target limit order price.</li>
       </ol>
+${buildFaqHtml("Frequently Asked Questions (FAQ)", enFaqs)}
+
       <hr>
       <p style="font-size: 0.8em; color: var(--pico-muted-color);">
         <strong>Disclaimer:</strong><br>
@@ -140,6 +205,7 @@ export const dictionary = {
     resultYield: "利回り (%)",
     aboutTitle: "このサイトについて",
     aboutBtn: "使い方",
+    faq: jaFaqs,
     aboutContent: `
       <h3>指値に意味を持たせませんか？</h3>
       <p>「なんとなく」の指値はもう卒業。このツールは、あなたが狙っている「理想の利回り」や「割安水準」が具体的にいくらなのかを、財務指標から逆算する投資シミュレーターです。</p>
@@ -170,6 +236,7 @@ export const dictionary = {
         <li>目標指標の「目標利回り」スライダーを動かして <strong>4</strong> に設定します。</li>
         <li>算出結果に <strong>750</strong> (円) と表示されます。これがあなたの指値すべき価格です。</li>
       </ol>
+${buildFaqHtml("よくある質問（FAQ）", jaFaqs)}
     `,
     close: "閉じる",
   },

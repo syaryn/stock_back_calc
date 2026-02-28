@@ -25,25 +25,16 @@ app.get("/sitemap.xml", (c) => {
   <url>
     <loc>https://stock-back-calc.syaryn.com/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://stock-back-calc.syaryn.com/?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
-    <lastmod>${today}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://stock-back-calc.syaryn.com/?lang=ja</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/?lang=en" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>

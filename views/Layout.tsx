@@ -1,6 +1,7 @@
 import { html, raw } from "hono/html";
 
 import { Child } from "hono/jsx";
+import { dictionary } from "../utils/i18n.ts";
 
 export const Layout = (
   props: {
@@ -16,14 +17,10 @@ export const Layout = (
     "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
   const baseUrl = "https://stock-back-calc.syaryn.com/";
 
-  // Construct the canonical URL preserving the explicit language parameter if needed
-  let currentUrl = baseUrl;
+  // Canonical URL: English → root (/), Japanese → /?lang=ja
   const explicitLang = props.queryParams?.lang || props.lang;
-  if (explicitLang && explicitLang !== "en") {
-    currentUrl = `${baseUrl}?lang=${explicitLang}`;
-  } else if (explicitLang === "en") {
-    currentUrl = `${baseUrl}?lang=en`;
-  }
+  const isJa = explicitLang === "ja";
+  const currentUrl = isJa ? `${baseUrl}?lang=ja` : baseUrl;
 
   const ldJson = {
     "@context": "https://schema.org",
@@ -49,6 +46,21 @@ export const Layout = (
     ],
   };
 
+  const currentDict = isJa ? dictionary.ja : dictionary.en;
+
+  const faqJson = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": currentDict.faq.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a,
+      },
+    })),
+  };
+
   return html`
     <!DOCTYPE html>
     <html lang="${props.lang || "en"}">
@@ -58,7 +70,7 @@ export const Layout = (
         <meta name="description" content="${description}" />
         <title>${title}</title>
         <link rel="canonical" href="${currentUrl}" />
-        <link rel="alternate" hreflang="en" href="${baseUrl}?lang=en" />
+        <link rel="alternate" hreflang="en" href="${baseUrl}" />
         <link rel="alternate" hreflang="ja" href="${baseUrl}?lang=ja" />
         <link rel="alternate" hreflang="x-default" href="${baseUrl}" />
 
@@ -79,6 +91,9 @@ export const Layout = (
         <!-- JSON-LD Structured Data -->
         <script type="application/ld+json">
         ${raw(JSON.stringify(ldJson).replace(/\//g, "\\/"))}
+        </script>
+        <script type="application/ld+json">
+        ${raw(JSON.stringify(faqJson).replace(/\//g, "\\/"))}
         </script>
 
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
