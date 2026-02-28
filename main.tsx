@@ -17,7 +17,7 @@ Sitemap: https://stock-back-calc.syaryn.com/sitemap.xml`,
 });
 
 app.get("/sitemap.xml", (c) => {
-  const today = new Date().toISOString().split("T")[0];
+  const today = Temporal.Now.plainDateISO().toString();
   c.header("Content-Type", "application/xml; charset=utf-8");
   return c.body(
     `<?xml version="1.0" encoding="UTF-8"?>
