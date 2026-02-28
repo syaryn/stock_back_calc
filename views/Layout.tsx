@@ -86,6 +86,15 @@ export const Layout = (
               "はい、完全無料でご利用いただけます。登録不要で、すべての機能をそのままご利用いただけます。",
           },
         },
+        {
+          "@type": "Question",
+          "name": "EPSとPERから目標株価を計算するには？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text":
+              "現在の株価と現在PERを入力すると、ツールが内部でEPS（= 株価 ÷ 現在PER）を計算します。次に目標PERを設定すれば、目標株価 = EPS × 目標PER が自動で算出されます。",
+          },
+        },
       ],
     }
     : {
@@ -126,6 +135,15 @@ export const Layout = (
             "@type": "Answer",
             "text":
               "Yes, this tool is completely free to use. No registration is required, and all features are available without any cost.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "How do I calculate a target stock price using EPS and PER?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text":
+              "Enter the current stock price and current PER. The tool will derive the implied EPS (= Stock Price / Current PER). Then set your Target PER, and the tool will calculate: Target Price = EPS × Target PER.",
           },
         },
       ],
