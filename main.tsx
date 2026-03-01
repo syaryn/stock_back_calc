@@ -50,16 +50,11 @@ app.use("/*", serveStatic({ root: "./static" }));
 const renderCalculator = (c: Context, explicitLang?: string) => {
   const query = c.req.query();
 
-  const acceptLanguage = c.req.header("Accept-Language") || null;
-  const langFromHeader = detectLanguage(acceptLanguage);
+  const defaultLanguage = "ja";
 
-  // Determine effective language
-  let lang = langFromHeader;
+  let lang = defaultLanguage;
   if (explicitLang === "en" || explicitLang === "ja") {
     lang = explicitLang;
-  } else if (query.lang === "en" || query.lang === "ja") {
-    // Fallback back to query param if it exists for some logic, but usually should rely on explicitLang
-    lang = query.lang;
   }
 
   // Parse Query Params for Initial State (SSR/Testing)
