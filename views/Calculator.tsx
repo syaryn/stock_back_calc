@@ -8,6 +8,7 @@ import {
 
 interface CalculatorProps {
   lang: Language;
+  pathLang?: string;
   initialState?: Partial<MarketState>;
   initialTargets?: { per?: number; pbr?: number; yield?: number };
   queryParams?: Record<string, string>;
@@ -23,8 +24,14 @@ export const Calculator = (props: CalculatorProps) => {
   // Construct SSR fallback href preserving other query params
   const targetLang = initialLang === "en" ? "ja" : "en";
   const fallbackParams = new URLSearchParams(queryParams);
-  fallbackParams.set("lang", targetLang);
-  const fallbackHref = `?${fallbackParams.toString()}`;
+  // remove lang from query since we use paths now
+  fallbackParams.delete("lang");
+  const fallbackQuery = fallbackParams.size > 0
+    ? `?${fallbackParams.toString()}`
+    : "";
+  const fallbackHref = targetLang === "ja"
+    ? `/ja/${fallbackQuery}`
+    : `/${fallbackQuery}`;
 
   const dictJson = JSON.stringify(dictionary);
 
@@ -96,8 +103,9 @@ document.addEventListener('alpine:init', () => {
     getLangSwitchUrl() {
       const nextLang = this.lang === 'en' ? 'ja' : 'en';
       const params = new URLSearchParams(window.location.search);
-      params.set('lang', nextLang);
-      return window.location.pathname + '?' + params.toString();
+      params.delete('lang'); // Ensure no old lang query persists
+      const search = params.toString() ? '?' + params.toString() : '';
+      return nextLang === 'ja' ? '/ja/' + search : '/' + search;
     },
 
     formatCurrency(val) {
@@ -171,9 +179,12 @@ document.addEventListener('alpine:init', () => {
       if (this.targetPbr) params.set('targetPbr', this.targetPbr);
       if (this.targetYield) params.set('targetYield', this.targetYield);
 
-      params.set('lang', this.lang);
-
-      const newUrl = window.location.pathname + '?' + params.toString();
+      // We don't set 'lang' in query params anymore
+      
+      // Keep existing pathname explicitly (don't override /ja/ with / unless explicitly triggered by lang switch)
+      const currentPath = window.location.pathname;
+      const search = params.toString() ? '?' + params.toString() : '';
+      const newUrl = currentPath + search;
       window.history.replaceState({}, '', newUrl);
     }
   }))

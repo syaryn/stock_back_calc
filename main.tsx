@@ -1,7 +1,7 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
-import { detectLanguage, dictionary } from "./utils/i18n.ts";
+import { dictionary, Language } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
 import { serveStatic } from "hono/deno";
@@ -26,16 +26,16 @@ app.get("/sitemap.xml", (c) => {
     <loc>https://stock-back-calc.syaryn.com/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/ja/" />
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://stock-back-calc.syaryn.com/?lang=ja</loc>
+    <loc>https://stock-back-calc.syaryn.com/ja/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/?lang=ja" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/ja/" />
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -46,16 +46,16 @@ app.get("/sitemap.xml", (c) => {
 
 app.use("/*", serveStatic({ root: "./static" }));
 
-app.get("/", (c) => {
+// Handler for rendering Calculator
+const renderCalculator = (c: Context, explicitLang?: string) => {
   const query = c.req.query();
 
-  const acceptLanguage = c.req.header("Accept-Language") || null;
-  const langFromHeader = detectLanguage(acceptLanguage);
+  const defaultLanguage: Language = "en";
 
-  const langParam = query.lang;
-  const lang = (langParam === "en" || langParam === "ja")
-    ? langParam
-    : langFromHeader;
+  let lang: Language = defaultLanguage;
+  if (explicitLang === "en" || explicitLang === "ja") {
+    lang = explicitLang;
+  }
 
   // Parse Query Params for Initial State (SSR/Testing)
   const initialState: Partial<MarketState> = {};
@@ -70,21 +70,60 @@ app.get("/", (c) => {
   if (query.targetPbr) initialTargets.pbr = parseFloat(query.targetPbr);
   if (query.targetYield) initialTargets.yield = parseFloat(query.targetYield);
 
+  // pathLang communicates to the layout if we are physically on a language path
+  const pathLang = explicitLang;
+
   return c.html(
     <Layout
       title={dictionary[lang].title}
       description={dictionary[lang].description}
       lang={lang}
-      queryParams={query}
+      pathLang={pathLang}
     >
       <Calculator
         lang={lang}
         initialState={initialState}
         initialTargets={initialTargets}
         queryParams={query}
+        pathLang={pathLang}
       />
     </Layout>,
   );
+};
+
+// Redirect middleware for old query params
+app.use("*", async (c, next) => {
+  const lang = c.req.query("lang");
+  if (lang === "ja" || lang === "en") {
+    const url = new URL(c.req.url);
+    url.searchParams.delete("lang");
+    url.pathname = lang === "ja" ? "/ja/" : "/"; // normalize en to /
+    return c.redirect(url.toString(), 301);
+  }
+  await next();
 });
+
+// Route /ja/ specifically
+app.get("/ja/", (c) => renderCalculator(c, "ja"));
+app.get("/ja", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/ja/";
+  return c.redirect(url.toString(), 301);
+});
+
+// Redirect /en/ or /en back to canonical index (/)
+app.get("/en/", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/";
+  return c.redirect(url.toString(), 301);
+});
+app.get("/en", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/";
+  return c.redirect(url.toString(), 301);
+});
+
+// Default route
+app.get("/", (c) => renderCalculator(c));
 
 export default app;
