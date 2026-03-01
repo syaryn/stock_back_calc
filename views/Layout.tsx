@@ -8,7 +8,7 @@ export const Layout = (
     title: string;
     description?: string;
     lang?: string;
-    queryParams?: Record<string, string>;
+    pathLang?: string;
     children?: Child;
   },
 ) => {
@@ -17,10 +17,10 @@ export const Layout = (
     "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
   const baseUrl = "https://stock-back-calc.syaryn.com/";
 
-  // Canonical URL: English → root (/), Japanese → /?lang=ja
-  const explicitLang = props.queryParams?.lang || props.lang;
+  // Canonical URL: English → root (/), Japanese → /ja/
+  const explicitLang = props.pathLang || (props.lang === "ja" ? "ja" : "en");
   const isJa = explicitLang === "ja";
-  const currentUrl = isJa ? `${baseUrl}?lang=ja` : baseUrl;
+  const currentUrl = isJa ? `${baseUrl}ja/` : baseUrl;
 
   const ldJson = {
     "@context": "https://schema.org",
@@ -71,7 +71,7 @@ export const Layout = (
         <title>${title}</title>
         <link rel="canonical" href="${currentUrl}" />
         <link rel="alternate" hreflang="en" href="${baseUrl}" />
-        <link rel="alternate" hreflang="ja" href="${baseUrl}?lang=ja" />
+        <link rel="alternate" hreflang="ja" href="${baseUrl}ja/" />
         <link rel="alternate" hreflang="x-default" href="${baseUrl}" />
 
         <!-- Open Graph -->
