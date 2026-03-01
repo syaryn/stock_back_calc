@@ -6,20 +6,20 @@ Deno.test("i18n config has default locale", () => {
   assertEquals(i18nConfig.defaultLocale, "en");
 });
 
-Deno.test("GET / defaults to Japanese", async () => {
+Deno.test("GET / defaults to English", async () => {
   const req = new Request("http://localhost:8000/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
   const text = await res.text();
-  assertStringIncludes(text, "現在値");
+  assertStringIncludes(text, "Current Values");
 });
 
-Deno.test("GET /en/ returns English", async () => {
-  const req = new Request("http://localhost:8000/en/");
+Deno.test("GET /ja/ returns Japanese", async () => {
+  const req = new Request("http://localhost:8000/ja/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
   const text = await res.text();
-  assertStringIncludes(text, "Current Values");
+  assertStringIncludes(text, "現在値");
 });
 
 Deno.test("GET /favicon.ico returns 200", async () => {

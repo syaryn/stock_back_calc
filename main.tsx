@@ -1,7 +1,7 @@
 import { Context, Hono } from "hono";
 import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
-import { detectLanguage, dictionary } from "./utils/i18n.ts";
+import { dictionary, Language } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
 import { serveStatic } from "hono/deno";
@@ -50,9 +50,9 @@ app.use("/*", serveStatic({ root: "./static" }));
 const renderCalculator = (c: Context, explicitLang?: string) => {
   const query = c.req.query();
 
-  const defaultLanguage = "ja";
+  const defaultLanguage: Language = "en";
 
-  let lang = defaultLanguage;
+  let lang: Language = defaultLanguage;
   if (explicitLang === "en" || explicitLang === "ja") {
     lang = explicitLang;
   }
@@ -103,10 +103,25 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-// Route /ja/ and /en/ specifically
-app.get("/:lang(ja|en)/", (c) => renderCalculator(c, c.req.param("lang")));
-app.get("/ja", (c) => c.redirect("/ja/", 301)); // redirect trailing slash
-app.get("/en", (c) => c.redirect("/", 301)); // normalize en to index
+// Route /ja/ specifically
+app.get("/ja/", (c) => renderCalculator(c, "ja"));
+app.get("/ja", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/ja/";
+  return c.redirect(url.toString(), 301);
+});
+
+// Redirect /en/ or /en back to canonical index (/)
+app.get("/en/", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/";
+  return c.redirect(url.toString(), 301);
+});
+app.get("/en", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/";
+  return c.redirect(url.toString(), 301);
+});
 
 // Default route
 app.get("/", (c) => renderCalculator(c));
