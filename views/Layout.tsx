@@ -74,7 +74,7 @@ export const Layout = (
   };
 
   const defaultStructuredData = props.pageType === "article"
-    ? [faqJson]
+    ? []
     : [ldJson, faqJson];
   const structuredData = [
     ...defaultStructuredData,
