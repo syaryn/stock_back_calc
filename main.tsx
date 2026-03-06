@@ -1,4 +1,5 @@
 import { Context, Hono } from "hono";
+import { getCookie, setCookie } from "hono/cookie";
 import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
 import { Guide } from "./views/Guide.tsx";
@@ -9,6 +10,7 @@ import { MarketState } from "./utils/pricing.ts";
 import { serveStatic } from "hono/deno";
 
 export const app = new Hono();
+const preferredLangCookieName = "preferred_lang";
 
 const getPreferredLanguage = (acceptLanguage: string | undefined): Language => {
   if (!acceptLanguage) return "en";
@@ -23,7 +25,7 @@ const getPreferredLanguage = (acceptLanguage: string | undefined): Language => {
       const q = qValue ? Number.parseFloat(qValue) : 1;
       return { tag, q: Number.isFinite(q) ? q : 0 };
     })
-    .filter((entry) => entry.tag.length > 0)
+    .filter((entry) => entry.tag.length > 0 && entry.q > 0)
     .sort((a, b) => b.q - a.q);
 
   for (const { tag } of languages) {
@@ -207,6 +209,12 @@ const renderAbout = (c: Context, lang: Language) => {
 app.use("*", async (c, next) => {
   const lang = c.req.query("lang");
   if (lang === "ja" || lang === "en") {
+    setCookie(c, preferredLangCookieName, lang, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: "Lax",
+      httpOnly: true,
+    });
     const url = new URL(c.req.url);
     const isGuidePath = /\/guide\/?$/.test(url.pathname);
     const isAboutPath = /\/about\/?$/.test(url.pathname);
@@ -225,11 +233,18 @@ const redirectJapaneseBrowserToLocalizedPath = async (
   c: Context,
   next: () => Promise<void>,
 ) => {
+  const persistedLanguage = getCookie(c, preferredLangCookieName);
+  if (persistedLanguage === "ja" || persistedLanguage === "en") {
+    await next();
+    return;
+  }
+
   const preferredLanguage = getPreferredLanguage(
     c.req.header("accept-language"),
   );
   if (preferredLanguage === "ja") {
     const url = new URL(c.req.url);
+    c.header("Vary", "Accept-Language");
     url.pathname = url.pathname === "/guide/"
       ? "/ja/guide/"
       : url.pathname === "/about/"
@@ -277,31 +292,67 @@ app.get("/ja/about", (c) => {
 });
 
 app.get("/en/", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/guide/", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/guide/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/guide", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/guide/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/about/", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/about/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/about", (c) => {
+  setCookie(c, preferredLangCookieName, "en", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
   const url = new URL(c.req.url);
   url.pathname = "/about/";
   return c.redirect(url.toString(), 301);
