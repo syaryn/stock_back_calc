@@ -18,13 +18,12 @@ export const Calculator = (props: CalculatorProps) => {
   const { lang, initialState = {}, initialTargets = {}, queryParams = {} } =
     props;
   const initialLang = lang && (lang === "ja" || lang === "en") ? lang : "en";
+  const localized = dictionary[initialLang];
   const t = (key: string) =>
-    dictionary[initialLang][key as keyof typeof dictionary.en] || key;
+    localized[key as keyof typeof dictionary.en] || key;
 
-  // Construct SSR fallback href preserving other query params
   const targetLang = initialLang === "en" ? "ja" : "en";
   const fallbackParams = new URLSearchParams(queryParams);
-  // remove lang from query since we use paths now
   fallbackParams.delete("lang");
   const fallbackQuery = fallbackParams.size > 0
     ? `?${fallbackParams.toString()}`
@@ -35,7 +34,6 @@ export const Calculator = (props: CalculatorProps) => {
 
   const dictJson = JSON.stringify(dictionary);
 
-  // Logic Injection: We output the source code of the pricing functions so Alpine.js can use them.
   const script = `
 const dictionaryData = ${dictJson};
 const calculateFundamentals = ${calculateFundamentals.toString()};
@@ -45,28 +43,17 @@ document.addEventListener('alpine:init', () => {
   Alpine.data('calculator', () => ({
     lang: '${initialLang}',
     dict: dictionaryData,
-
-    // Market State Inputs (Default to null if not provided)
     stockPrice: ${initialState.price ?? "null"},
     currentPer: ${initialState.per ?? "null"},
     currentPbr: ${initialState.pbr ?? "null"},
     currentYield: ${initialState.yield ?? "null"},
-
-    // Targets
-    // If explicit target provided, use it.
-    // Else if current provided, use current (synced).
-    // Else null.
     targetPer: ${initialTargets.per ?? (initialState.per ?? "null")},
     targetPbr: ${initialTargets.pbr ?? (initialState.pbr ?? "null")},
     targetYield: ${initialTargets.yield ?? (initialState.yield ?? "null")},
-
-    // Dirty Flags
-    // True only if explicitly provided in initialTargets
     targetPerDirty: ${initialTargets.per !== undefined ? "true" : "false"},
     targetPbrDirty: ${initialTargets.pbr !== undefined ? "true" : "false"},
     targetYieldDirty: ${initialTargets.yield !== undefined ? "true" : "false"},
 
-    // Computed Fundamentals
     get fundamentals() {
       return calculateFundamentals({
         price: this.stockPrice,
@@ -76,7 +63,6 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // Computed Target Prices
     get results() {
       return calculateTargetPrices(this.fundamentals, {
         per: this.targetPer,
@@ -85,7 +71,6 @@ document.addEventListener('alpine:init', () => {
       });
     },
 
-    // Computed Implied Metrics at Min Price
     get implied() {
       const p = this.results.minPrice;
       if (!p || !this.fundamentals) return null;
@@ -103,7 +88,7 @@ document.addEventListener('alpine:init', () => {
     getLangSwitchUrl() {
       const nextLang = this.lang === 'en' ? 'ja' : 'en';
       const params = new URLSearchParams(window.location.search);
-      params.delete('lang'); // Ensure no old lang query persists
+      params.delete('lang');
       const search = params.toString() ? '?' + params.toString() : '';
       return nextLang === 'ja' ? '/ja/' + search : '/' + search;
     },
@@ -123,31 +108,12 @@ document.addEventListener('alpine:init', () => {
       return val.toFixed(digits)
     },
 
-    formatPercent(val) {
-      if (val === null || val === undefined || isNaN(val)) return '-'
-      return val.toFixed(2) + '%'
-    },
-
-    // Comparison Text Color
     getDiffStyle(targetPrice) {
       if (!this.stockPrice || !targetPrice) return ''
       return targetPrice > this.stockPrice ? 'color: var(--pico-color-emerald-500)' : 'color: var(--pico-color-pink-500)'
     },
 
-    // Comparison Text
-    getDiffText(targetPrice) {
-      if (!this.stockPrice || !targetPrice) return ''
-      if (targetPrice > this.stockPrice) {
-        const diff = ((targetPrice - this.stockPrice) / this.stockPrice) * 100
-        return '+' + diff.toFixed(1) + '% (' + this.t('upside') + ')'
-      } else {
-        const diff = ((this.stockPrice - targetPrice) / this.stockPrice) * 100
-        return '-' + diff.toFixed(1) + '% (' + this.t('downside') + ')'
-      }
-    },
-
     init() {
-      // Sync Logic: If target not dirty, follow current
       this.$watch('currentPer', (val) => {
         if (!this.targetPerDirty) this.targetPer = val;
         this.updateUrl();
@@ -160,8 +126,6 @@ document.addEventListener('alpine:init', () => {
         if (!this.targetYieldDirty) this.targetYield = val;
         this.updateUrl();
       });
-      
-      // Watchers for URL updates
       this.$watch('stockPrice', () => this.updateUrl());
       this.$watch('targetPer', () => this.updateUrl());
       this.$watch('targetPbr', () => this.updateUrl());
@@ -174,14 +138,9 @@ document.addEventListener('alpine:init', () => {
       if (this.currentPer) params.set('currentPer', this.currentPer);
       if (this.currentPbr) params.set('currentPbr', this.currentPbr);
       if (this.currentYield) params.set('currentYield', this.currentYield);
-      
       if (this.targetPer) params.set('targetPer', this.targetPer);
       if (this.targetPbr) params.set('targetPbr', this.targetPbr);
       if (this.targetYield) params.set('targetYield', this.targetYield);
-
-      // We don't set 'lang' in query params anymore
-      
-      // Keep existing pathname explicitly (don't override /ja/ with / unless explicitly triggered by lang switch)
       const currentPath = window.location.pathname;
       const search = params.toString() ? '?' + params.toString() : '';
       const newUrl = currentPath + search;
@@ -193,18 +152,17 @@ document.addEventListener('alpine:init', () => {
 
   return html`
     <div x-data="calculator">
-      <!-- Header with Language Toggle -->
       <nav>
         <ul>
-          <li>
-            <h1 style="font-size: 1rem; margin: 0;">
-              <span x-text="t('title')">${t(
-                "title",
-              )}</span>
-            </h1>
-          </li>
+          <li><strong>${localized.toolNavLabel}</strong></li>
         </ul>
         <ul>
+          <li><a href="${initialLang === "ja"
+            ? "/ja/"
+            : "/"}" aria-current="page">${localized.toolNavLabel}</a></li>
+          <li><a href="${initialLang === "ja"
+            ? "/ja/guide/"
+            : "/guide/"}">${localized.guideNavLabel}</a></li>
           <li>
             <a
               href="https://github.com/syaryn/stock_back_calc"
@@ -242,9 +200,18 @@ document.addEventListener('alpine:init', () => {
         </ul>
       </nav>
 
-      <!-- Main Grid Layout -->
+      <section style="margin-block: 1.5rem 2rem;">
+        <p style="margin-bottom: 0.4rem; color: var(--pico-muted-color);">
+          ${localized.introEyebrow}
+        </p>
+        <h1>${localized.introHeading}</h1>
+        <p>${localized.introBody}</p>
+        <p><a href="${initialLang === "ja"
+          ? "/ja/guide/"
+          : "/guide/"}">${localized.guideLinkLabel}</a></p>
+      </section>
+
       <div class="responsive-grid">
-        <!-- Column 1: Inputs (Current Market State) -->
         <article class="card-content">
           <header><h2 x-text="t('currentValues')">${t(
             "currentValues",
@@ -287,13 +254,11 @@ document.addEventListener('alpine:init', () => {
           </label>
         </article>
 
-        <!-- Column 2: Targets (Sliders + Inputs) -->
         <article class="card-content">
           <header><h2 x-text="t('targetValues')">${t(
             "targetValues",
           )}</h2></header>
 
-          <!-- Target PER -->
           <label>
             <div class="grid">
               <span x-text="t('targetPer')">${t("targetPer")}</span>
@@ -317,7 +282,6 @@ document.addEventListener('alpine:init', () => {
             >
           </label>
 
-          <!-- Target PBR -->
           <label>
             <div class="grid">
               <span x-text="t('targetPbr')">${t("targetPbr")}</span>
@@ -341,7 +305,6 @@ document.addEventListener('alpine:init', () => {
             >
           </label>
 
-          <!-- Target Yield -->
           <label>
             <div class="grid">
               <span x-text="t('targetYield')">${t("targetYield")}</span>
@@ -366,11 +329,9 @@ document.addEventListener('alpine:init', () => {
           </label>
         </article>
 
-        <!-- Column 3: Results -->
         <article class="card-content">
           <header><h2 x-text="t('results')">${t("results")}</h2></header>
 
-          <!-- Final Result (Minimum Price) -->
           <div
             style="padding: 1rem; border: 2px solid var(--pico-primary-border); margin-bottom: 2rem; border-radius: 8px; text-align: center;"
           >
@@ -429,11 +390,23 @@ document.addEventListener('alpine:init', () => {
         </article>
       </div>
 
-      <!-- About Content (visible for SEO and usability) -->
       <section style="margin-top: 2rem;">
-        <div x-html="t('aboutContent')">${raw(
-          dictionary[initialLang].aboutContent,
-        )}</div>
+        <p><strong>${localized.guideCta}</strong></p>
+        <p>
+          <a href="${initialLang === "ja"
+            ? "/ja/guide/"
+            : "/guide/"}" role="button" class="outline">
+            ${localized.guideLinkLabel}
+          </a>
+        </p>
+        <p><strong>${localized.aboutCta}</strong></p>
+        <p>
+          <a href="${initialLang === "ja"
+            ? "/ja/about/"
+            : "/about/"}" role="button" class="secondary">
+            ${localized.aboutLinkLabel}
+          </a>
+        </p>
       </section>
 
       <script>
