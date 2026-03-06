@@ -10,6 +10,30 @@ import { serveStatic } from "hono/deno";
 
 export const app = new Hono();
 
+const getPreferredLanguage = (acceptLanguage: string | undefined): Language => {
+  if (!acceptLanguage) return "en";
+
+  const languages = acceptLanguage
+    .split(",")
+    .map((entry) => {
+      const [tagPart, ...params] = entry.trim().split(";");
+      const tag = tagPart.toLowerCase();
+      const qValue = params.find((param) => param.trim().startsWith("q="))
+        ?.split("=")[1];
+      const q = qValue ? Number.parseFloat(qValue) : 1;
+      return { tag, q: Number.isFinite(q) ? q : 0 };
+    })
+    .filter((entry) => entry.tag.length > 0)
+    .sort((a, b) => b.q - a.q);
+
+  for (const { tag } of languages) {
+    if (tag === "ja" || tag.startsWith("ja-")) return "ja";
+    if (tag === "en" || tag.startsWith("en-")) return "en";
+  }
+
+  return "en";
+};
+
 app.get("/robots.txt", (c) => {
   return c.text(
     `User-agent: *
@@ -196,6 +220,30 @@ app.use("*", async (c, next) => {
   }
   await next();
 });
+
+const redirectJapaneseBrowserToLocalizedPath = async (
+  c: Context,
+  next: () => Promise<void>,
+) => {
+  const preferredLanguage = getPreferredLanguage(
+    c.req.header("accept-language"),
+  );
+  if (preferredLanguage === "ja") {
+    const url = new URL(c.req.url);
+    url.pathname = url.pathname === "/guide/"
+      ? "/ja/guide/"
+      : url.pathname === "/about/"
+      ? "/ja/about/"
+      : "/ja/";
+    return c.redirect(url.toString(), 302);
+  }
+
+  await next();
+};
+
+app.use("/", redirectJapaneseBrowserToLocalizedPath);
+app.use("/guide/", redirectJapaneseBrowserToLocalizedPath);
+app.use("/about/", redirectJapaneseBrowserToLocalizedPath);
 
 app.get("/ja/", (c) => renderCalculator(c, "ja"));
 app.get("/ja", (c) => {

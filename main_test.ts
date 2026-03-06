@@ -16,6 +16,15 @@ Deno.test("GET / defaults to English", async () => {
   assertStringIncludes(text, "Read the overview");
 });
 
+Deno.test("GET / with Japanese Accept-Language redirects to /ja/", async () => {
+  const req = new Request("http://localhost:8000/", {
+    headers: { "Accept-Language": "ja,en-US;q=0.9,en;q=0.8" },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/");
+});
+
 Deno.test("GET /ja/ returns Japanese", async () => {
   const req = new Request("http://localhost:8000/ja/");
   const res = await app.request(req);
@@ -41,6 +50,15 @@ Deno.test("GET /guide/ returns guide page metadata", async () => {
   assertStringIncludes(text, '"@type":"Article"');
 });
 
+Deno.test("GET /guide/ with Japanese Accept-Language redirects to /ja/guide/", async () => {
+  const req = new Request("http://localhost:8000/guide/", {
+    headers: { "Accept-Language": "ja-JP,ja;q=0.9,en;q=0.8" },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/guide/");
+});
+
 Deno.test("GET /about/ returns about page metadata", async () => {
   const req = new Request("http://localhost:8000/about/");
   const res = await app.request(req);
@@ -59,6 +77,15 @@ Deno.test("GET /about/ returns about page metadata", async () => {
     "What this stock target price calculator helps you decide",
   );
   assertStringIncludes(text, '"@type":"Article"');
+});
+
+Deno.test("GET /about/ with Japanese Accept-Language redirects to /ja/about/", async () => {
+  const req = new Request("http://localhost:8000/about/", {
+    headers: { "Accept-Language": "en-US;q=0.5,ja;q=0.9" },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/about/");
 });
 
 Deno.test("GET /ja/guide/ returns Japanese guide", async () => {
