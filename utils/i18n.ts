@@ -5,76 +5,9 @@ export const i18nConfig = {
   locales: ["en", "ja"] as Language[],
 };
 
-export function detectLanguage(acceptLanguageHeader: string | null): Language {
-  if (!acceptLanguageHeader) {
-    return i18nConfig.defaultLocale;
-  }
+type FaqItem = { q: string; a: string };
 
-  const languages = acceptLanguageHeader.split(",").map((lang) => {
-    const [code, qValue] = lang.trim().split(";");
-    const q = qValue ? parseFloat(qValue.split("=")[1]) : 1.0;
-    return { code, q };
-  }).sort((a, b) => b.q - a.q);
-
-  for (const { code } of languages) {
-    if (code === "ja" || code.startsWith("ja-")) {
-      return "ja";
-    }
-    if (code === "en" || code.startsWith("en-")) {
-      return "en";
-    }
-  }
-
-  return i18nConfig.defaultLocale;
-}
-
-export const enFaqs = [
-  {
-    q: "What is a stock target price?",
-    a: "A stock target price is a calculated price at which an investor would consider buying a stock. By using financial metrics like PER (Price-to-Earnings Ratio), PBR (Price-to-Book Ratio), and dividend yield, investors can set data-driven limit orders instead of arbitrary ones.",
-  },
-  {
-    q: "What is the difference between PER and PBR?",
-    a: "PER (Price-to-Earnings Ratio) measures how expensive a stock is relative to a company's earnings power (EPS). PBR (Price-to-Book Ratio) measures a stock's price relative to its net assets (BPS). A PBR below 1x is generally considered undervalued relative to book value.",
-  },
-  {
-    q: "What is the advantage of using dividend yield as a target?",
-    a: "Setting a target dividend yield gives you a clear, actionable buy price. For example, if a stock yields 3% and you want to buy it at a 4% yield, this tool instantly calculates the exact price you need to place your limit order at.",
-  },
-  {
-    q: "Is this tool free to use?",
-    a: "Yes, this tool is completely free to use. No registration is required, and all features are available without any cost.",
-  },
-  {
-    q: "How do I calculate a target stock price using EPS and PER?",
-    a: "Enter the current stock price and current PER. The tool will derive the implied EPS (= Stock Price / Current PER). Then set your Target PER, and the tool will calculate: Target Price = EPS × Target PER.",
-  },
-];
-
-export const jaFaqs = [
-  {
-    q: "目標株価とは何ですか？",
-    a: "目標株価とは、投資家が「この価格なら買いたい」と考える基準価格のことです。PER（株価収益率）・PBR（株価純資産倍率）・配当利回りなどの財務指標をもとに計算することで、感覚ではなく根拠のある指値を設定できます。",
-  },
-  {
-    q: "PERとPBRの違いは何ですか？",
-    a: "PER（Price Earnings Ratio）は企業の「稼ぐ力（EPS）」に基準を置いた割安度指標です。PBR（Price Book-value Ratio）は企業の「純資産（BPS）」に基準を置いた指標で、PBR1倍以下は解散価値割れとも言われます。",
-  },
-  {
-    q: "配当利回りを基準に株価を計算するメリットは？",
-    a: "配当利回りを基準にすると「このくらいの利回りになったら買いたい」という明確な基準で目標株価を設定できます。例えば、利回り3%の銘柄を「4%になったら買う」と決めれば、ツールが自動で目標株価を算出します。",
-  },
-  {
-    q: "このツールは無料で使えますか？",
-    a: "はい、完全無料でご利用いただけます。登録不要で、すべての機能をそのままご利用いただけます。",
-  },
-  {
-    q: "EPSとPERから目標株価を計算するには？",
-    a: "現在の株価と現在PERを入力すると、ツールが内部でEPS（= 株価 ÷ 現在PER）を計算します。次に目標PERを設定すれば、目標株価 = EPS × 目標PER が自動で算出されます。",
-  },
-];
-
-function buildFaqHtml(title: string, faqs: { q: string; a: string }[]) {
+function buildFaqHtml(title: string, faqs: FaqItem[]) {
   return `
       <h3>${title}</h3>
 ${
@@ -90,29 +23,71 @@ ${
   }`;
 }
 
+const enFaqs: FaqItem[] = [
+  {
+    q: "What does this stock target price calculator do?",
+    a: "It reverse-calculates a buy price from the valuation level you want to wait for. You can set a target PER, PBR, or dividend yield and the tool estimates the corresponding stock price.",
+  },
+  {
+    q: "Why use more than one indicator?",
+    a: "Each indicator captures a different perspective. PER looks at earnings, PBR looks at net assets, and dividend yield looks at cash returns to shareholders. Combining them helps you avoid relying on a single metric.",
+  },
+  {
+    q: "What is the bottleneck indicator?",
+    a: "When multiple target prices are calculated, the tool highlights the lowest one. That lowest price is the strictest condition and becomes the practical buy target if you want to satisfy every rule at the same time.",
+  },
+  {
+    q: "Can I share a calculation?",
+    a: "Yes. The calculator stores your current inputs in the URL query string, so you can bookmark or share a specific scenario without changing the canonical page used for indexing.",
+  },
+];
+
+const jaFaqs: FaqItem[] = [
+  {
+    q: "この目標株価計算ツールで何ができますか？",
+    a: "PER、PBR、配当利回りの目標水準から、待ちたい買い価格を逆算できます。感覚ではなく数値基準で指値を置きたい投資家向けのツールです。",
+  },
+  {
+    q: "なぜ PER・PBR・配当利回りを併用するのですか？",
+    a: "PER は利益、PBR は純資産、配当利回りは株主還元という別々の視点を見ています。複数の条件を組み合わせることで、1つの指標だけに依存しない判断ができます。",
+  },
+  {
+    q: "ボトルネック指標とは何ですか？",
+    a: "複数の目標価格を計算したときに、最も低い価格を作る条件です。すべての条件を満たしたい場合、その価格が実質的な買い目線になります。",
+  },
+  {
+    q: "入力内容を共有できますか？",
+    a: "できます。現在の入力値は URL に反映されるため、特定の計算条件をそのまま共有できます。検索用の canonical は固定 URL に維持されます。",
+  },
+];
+
 export const dictionary = {
   en: {
-    title: "Stock Target Price Calculator - PER, PBR & Dividend Yield",
+    title: "Stock Target Price Calculator for PER, PBR, and Dividend Yield",
     description:
-      "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.",
+      "Reverse-calculate a stock buy price from your target PER, PBR, and dividend yield. Includes investment context, formulas, and practical examples.",
+    guideTitle:
+      "How to Set a Stock Target Price with PER, PBR, and Dividend Yield",
+    guideDescription:
+      "A practical guide to setting stock buy targets with PER, PBR, and dividend yield, with examples and a direct link back to the calculator.",
     currentValues: "Current Values",
     targetValues: "Target Indicators",
     results: "Target Prices",
     stockPrice: "Stock Price",
     eps: "EPS (Earnings Per Share)",
-    bps: "BPS (Book-value Per Share)",
+    bps: "BPS (Book Value Per Share)",
     dividend: "Dividend",
     currentPer: "Current PER",
     currentPbr: "Current PBR",
     currentYield: "Current Yield (%)",
     targetPer: "Target PER",
     targetPbr: "Target PBR",
-    targetYield: "Target Yield",
+    targetYield: "Target Yield (%)",
     calculatedPrice: "Target Price",
     upside: "Upside",
     downside: "Downside",
     inputRequired: "Input required",
-    language: "Language/言語",
+    language: "Language",
     toggleLang: "日本語",
     optional: "(Optional)",
     perPrice: "PER Based",
@@ -123,121 +98,250 @@ export const dictionary = {
     resultPer: "PER",
     resultPbr: "PBR",
     resultYield: "Yield (%)",
-    aboutTitle: "About this tool",
-    aboutBtn: "About",
+    aboutTitle: "Why this calculator is useful",
     bottleneckDesc: "Bottleneck Indicator",
     faq: enFaqs,
+    guideNavLabel: "Guide",
+    toolNavLabel: "Calculator",
+    introEyebrow: "Stock valuation and buy-price planning",
+    introHeading: "Set a target stock price with explicit valuation rules",
+    introBody:
+      "Use this calculator to reverse a buy price from the valuation level you want. It is built for investors who want a repeatable rule instead of placing limit orders by intuition.",
+    guideCta:
+      "Need a deeper explanation? Read the practical guide to target prices.",
+    guideLinkLabel: "Read the guide",
+    toolLinkLabel: "Open the calculator",
     aboutContent: `
-      <h3>Bring Strategic Meaning to Your Stock Limit Orders</h3>
-      <p>
-        Stop guessing your limit orders. This tool is a stock valuation simulator that reverse-engineers the target price from your desired dividend yield and valuation multiples (PER/PBR).
-      </p>
+      <section>
+        <h2>What this stock target price calculator helps you decide</h2>
+        <p>
+          This tool estimates a buy price from the valuation level you want to wait for. Instead of asking "Is this stock cheap enough?", you define the price that would make the stock attractive on earnings, net assets, or dividend yield.
+        </p>
 
-      <h3>Target Price Use Cases: Dividend & Value Investing</h3>
-      <ul>
-        <li><strong>Dividend Growth Investing:</strong> "I want to buy when the yield hits 4%." → We calculate the exact price from current dividend data.</li>
-        <li><strong>Value Investing:</strong> "I want to buy at a historical average PER of 15x." → We derive the price from the company's earnings power (EPS).</li>
-        <li><strong>Asset Value (PBR):</strong> "I want to buy below Book Value (PBR 1x)." → We find the floor price based on net assets (BPS).</li>
-      </ul>
+        <h3>Typical investing use cases</h3>
+        <ul>
+          <li><strong>Dividend investing:</strong> "I only want to buy when the yield reaches 4%."</li>
+          <li><strong>Value investing:</strong> "I want to buy at 15x earnings or less."</li>
+          <li><strong>Balance-sheet discipline:</strong> "I want to add only below a certain PBR."</li>
+        </ul>
 
-      <h3>PER, PBR & Dividend Yield Calculation Logic</h3>
-      <p>We reverse-engineer the price using <strong>Expected EPS</strong>, <strong>Actual BPS</strong>, and <strong>Projected Dividend</strong> derived from your current inputs:</p>
-      <ul>
-        <li><strong>PER Price</strong> = Expected EPS × Target PER</li>
-        <li><strong>PBR Price</strong> = Actual BPS × Target PBR</li>
-        <li><strong>Yield Price</strong> = Annual Dividend / Target Yield</li>
-      </ul>
+        <h3>Calculation logic</h3>
+        <p>The calculator derives fundamentals from your current inputs, then applies your target thresholds.</p>
+        <ul>
+          <li><strong>PER price</strong> = EPS × Target PER</li>
+          <li><strong>PBR price</strong> = BPS × Target PBR</li>
+          <li><strong>Yield price</strong> = Annual dividend ÷ Target yield</li>
+        </ul>
 
-      <h3>Bottleneck Indicator &amp; Margin of Safety Analysis</h3>
-      <p>
-        When multiple targets are set, the tool identifies the "Bottleneck Indicator" and displays the lowest price. This ensures a solid "Margin of Safety" by meeting all your criteria.
-      </p>
+        <h3>How to read the result</h3>
+        <p>
+          When you set multiple target indicators, the tool shows the lowest calculated price. That is the strictest condition and works as a practical margin-of-safety reference.
+        </p>
 
-      <h3>Stock Price Calculation Example for Investment Strategy</h3>
-      <p><strong>Example: A stock is $1,000 with a 3% yield. You want to buy it when the yield reaches 4%.</strong></p>
-      <ol>
-        <li>Enter <strong>1000</strong> for Price and <strong>3</strong> for Current Yield.</li>
-        <li>Set Target Yield slider to <strong>4%</strong>.</li>
-        <li>Result: The tool displays <strong>$750</strong>. This is your target limit order price.</li>
-      </ol>
-${buildFaqHtml("Frequently Asked Questions (FAQ)", enFaqs)}
+        <h3>Common mistakes this page helps avoid</h3>
+        <ul>
+          <li>Comparing today’s price with a target multiple without deriving EPS or BPS first</li>
+          <li>Using only one valuation metric even when a stock is sensitive to another</li>
+          <li>Forgetting that a generous dividend yield target implies a lower acceptable buy price</li>
+        </ul>
 
-      <hr>
-      <p style="font-size: 0.8em; color: var(--pico-muted-color);">
-        <strong>Disclaimer:</strong><br>
-        The results are theoretical values based on input data and do not guarantee future stock prices or investment outcomes. Please invest at your own risk.
-      </p>
+        <h3>Worked example</h3>
+        <ol>
+          <li>Enter a stock price of <strong>1,000</strong> and a current yield of <strong>3%</strong>.</li>
+          <li>Set the target yield to <strong>4%</strong>.</li>
+          <li>The calculator returns <strong>750</strong> as the target buy price.</li>
+        </ol>
+
+${buildFaqHtml("Frequently Asked Questions", enFaqs)}
+
+        <hr>
+        <p style="font-size: 0.9em; color: var(--pico-muted-color);">
+          <strong>Disclaimer:</strong> The output is a planning aid based on your inputs. It does not guarantee future stock performance or investment outcomes.
+        </p>
+      </section>
     `,
-    close: "Close",
+    guideContent: `
+      <article>
+        <header>
+          <p><strong>Guide</strong></p>
+          <h1>How to think about a target stock price before placing a limit order</h1>
+          <p>
+            A target price is most useful when it is tied to a clear rule. This guide explains how PER, PBR, and dividend yield can be used to create that rule and how this calculator fits into the process.
+          </p>
+        </header>
+
+        <h2>1. Start with the decision, not the chart</h2>
+        <p>
+          Many investors choose a buy price because it "feels lower" than the recent market price. A better approach is to decide what valuation you would actually accept, then convert that rule into a concrete price.
+        </p>
+
+        <h2>2. Use the right indicator for the reason you are buying</h2>
+        <ul>
+          <li><strong>PER:</strong> useful when earnings power is the core of the thesis.</li>
+          <li><strong>PBR:</strong> useful when balance-sheet strength or asset backing matters.</li>
+          <li><strong>Dividend yield:</strong> useful when your return target depends on cash income.</li>
+        </ul>
+
+        <h2>3. Reverse the price from the target valuation</h2>
+        <p>
+          The calculator first derives EPS, BPS, and dividend amounts from your current data, then converts your target indicators into price levels. This makes each target explicit and comparable.
+        </p>
+
+        <h2>4. Treat the lowest calculated price as the strictest rule</h2>
+        <p>
+          If you require multiple conditions at once, the lowest price becomes the bottleneck. That is usually the most disciplined entry level because it satisfies every threshold simultaneously.
+        </p>
+
+        <h2>5. Keep the rule but revisit the inputs</h2>
+        <p>
+          Price targets are only as useful as the current fundamentals behind them. If earnings, book value, or dividends change materially, recalculate rather than anchoring to an outdated number.
+        </p>
+
+        <p>
+          <a href="/" role="button">Open the calculator</a>
+        </p>
+      </article>
+    `,
   },
   ja: {
-    title: "目標株価逆算ツール - PER・PBR・配当利回りから理論株価を計算",
+    title: "目標株価逆算ツール | PER・PBR・配当利回りから買い価格を計算",
     description:
-      "目標とするPER、PBR、配当利回りから理論株価を逆算する無料ツールです。バリュー投資家向けの株価シミュレーターに最適。",
+      "PER・PBR・配当利回りの目標水準から買いたい株価を逆算できる無料ツール。計算式、使い方、投資判断の考え方も日本語で解説します。",
+    guideTitle:
+      "目標株価の決め方ガイド | PER・PBR・配当利回りで買い価格を考える",
+    guideDescription:
+      "PER・PBR・配当利回りを使って目標株価を決める考え方を、日本語の具体例付きで解説するガイドページです。",
     currentValues: "現在値",
     targetValues: "目標指標",
-    results: "算出結果",
+    results: "目標株価",
     stockPrice: "株価",
-    eps: "予想EPS",
-    bps: "実績BPS",
-    dividend: "予想配当金",
-    currentPer: "現在PER (倍)",
-    currentPbr: "現在PBR (倍)",
-    currentYield: "現在利回り (%)",
-    targetPer: "目標PER",
-    targetPbr: "目標PBR",
-    targetYield: "目標利回り",
+    eps: "EPS（1株利益）",
+    bps: "BPS（1株純資産）",
+    dividend: "年間配当",
+    currentPer: "現在 PER",
+    currentPbr: "現在 PBR",
+    currentYield: "現在 配当利回り (%)",
+    targetPer: "目標 PER",
+    targetPbr: "目標 PBR",
+    targetYield: "目標 配当利回り (%)",
     calculatedPrice: "目標株価",
-    upside: "割安",
-    downside: "割高",
-    inputRequired: "入力待ち",
-    language: "Language/言語",
+    upside: "上値余地",
+    downside: "下落余地",
+    inputRequired: "入力が必要です",
+    language: "言語",
     toggleLang: "English",
-    optional: "(任意)",
-    perPrice: "PER基準",
-    pbrPrice: "PBR基準",
-    yieldPrice: "利回り基準",
-    finalPrice: "算出結果: 全ての条件を満たす株価",
-    bottleneck: "ボトルネック",
-    bottleneckDesc: "制約要因",
-    resultPer: "PER (倍)",
-    resultPbr: "PBR (倍)",
-    resultYield: "利回り (%)",
-    aboutTitle: "このサイトについて",
-    aboutBtn: "使い方",
+    optional: "任意",
+    perPrice: "PER ベース",
+    pbrPrice: "PBR ベース",
+    yieldPrice: "利回りベース",
+    finalPrice: "結果: すべての条件を満たす価格",
+    bottleneck: "ボトルネック指標",
+    resultPer: "PER",
+    resultPbr: "PBR",
+    resultYield: "配当利回り (%)",
+    aboutTitle: "このツールが役立つ理由",
+    bottleneckDesc: "ボトルネック指標",
     faq: jaFaqs,
+    guideNavLabel: "解説ガイド",
+    toolNavLabel: "計算ツール",
+    introEyebrow: "株価の逆算と指値設計",
+    introHeading: "感覚ではなく条件で目標株価を決める",
+    introBody:
+      "このツールは、欲しい利回りや許容したい PER・PBR から買い価格を逆算します。なんとなく安そうだからではなく、再現できるルールで指値を置きたい投資家向けです。",
+    guideCta:
+      "考え方から整理したい場合は、目標株価の決め方ガイドを先に読んでください。",
+    guideLinkLabel: "解説ガイドを読む",
+    toolLinkLabel: "計算ツールを開く",
     aboutContent: `
-      <h3>指値に意味を持たせませんか？</h3>
-      <p>「なんとなく」の指値はもう卒業。このツールは、あなたが狙っている「理想の利回り」や「割安水準」が具体的にいくらなのかを、財務指標から逆算する投資シミュレーターです。</p>
+      <section>
+        <h2>この目標株価逆算ツールで分かること</h2>
+        <p>
+          このページでは、あなたが待ちたい評価水準から買い価格を逆算できます。「今の株価が安いか」ではなく、「どの価格なら自分の基準を満たすか」を明確にするためのツールです。
+        </p>
 
-      <h4>目標株価の活用シーン：高配当株・バリュー投資</h4>
-      <ul>
-        <li><strong>高配当株投資:</strong> 「利回りが4%まで上がったら（株価が下がったら）買いたい」 &rarr; 現在の配当金から具体的なターゲット株価を算出します。</li>
-        <li><strong>バリュー投資:</strong> 「過去平均のPER 15倍で買いたい」 &rarr; 企業の収益力（EPS）に基づいた適正価格を特定します。</li>
-        <li><strong>資産価値（PBR）:</strong> 「解散価値であるPBR 1倍を割ったら買いたい」 &rarr; 純資産（BPS）に基づいた下値の目処を算出します。</li>
-      </ul>
+        <h3>よくある利用シーン</h3>
+        <ul>
+          <li><strong>高配当投資:</strong> 「利回りが 4% になったら買いたい」</li>
+          <li><strong>バリュー投資:</strong> 「PER 15 倍以下で買いたい」</li>
+          <li><strong>資産価値重視:</strong> 「PBR が 1 倍前後まで下がったら検討したい」</li>
+        </ul>
 
-      <h4>PER・PBR・配当利回りの計算ロジック</h4>
-      <p>入力された現在値から「予想EPS」「実績BPS」「予想配当金」を内部で算出し、それらに目標値を掛け合わせています。</p>
-      <ul>
-        <li><strong>PER基準価格</strong> = <code>予想EPS × 目標PER</code></li>
-        <li><strong>PBR基準価格</strong> = <code>実績BPS × 目標PBR</code></li>
-        <li><strong>利回り基準価格</strong> = <code>予想配当金 ÷ 目標利回り</code></li>
-      </ul>
+        <h3>計算式の考え方</h3>
+        <p>現在の入力値から EPS・BPS・年間配当を逆算し、そこに目標指標を当てて価格へ落とし込みます。</p>
+        <ul>
+          <li><strong>PER ベース株価</strong> = EPS × 目標 PER</li>
+          <li><strong>PBR ベース株価</strong> = BPS × 目標 PBR</li>
+          <li><strong>利回りベース株価</strong> = 年間配当 ÷ 目標配当利回り</li>
+        </ul>
 
-      <h4>ボトルネック指標と安全域（Margin of Safety）</h4>
-      <p>複数の条件を設定した場合、ツールは<strong>「最も低い株価（ボトルネック）」</strong>を算出結果として表示します。これにより、全ての条件をクリアする<strong>「安全域（Margin of Safety）」</strong>を確保した指値が可能になります。</p>
+        <h3>結果の読み方</h3>
+        <p>
+          複数の条件を設定した場合は、最も低い価格が表示されます。これは最も厳しい条件であり、すべてのルールを満たすための実質的な買い目線です。
+        </p>
 
-      <hr>
-      <h4>株価逆算の計算例</h4>
-      <p><strong>例:</strong> 株価1,000円、利回り3%の銘柄を、利回り4%の水準で買いたい場合</p>
-      <ol>
-        <li>現在値入力欄の「株価」に <strong>1000</strong>、「現在利回り」に <strong>3</strong> を入力します。</li>
-        <li>目標指標の「目標利回り」スライダーを動かして <strong>4</strong> に設定します。</li>
-        <li>算出結果に <strong>750</strong> (円) と表示されます。これがあなたの指値すべき価格です。</li>
-      </ol>
-${buildFaqHtml("よくある質問（FAQ）", jaFaqs)}
+        <h3>このページが防ぎたい失敗</h3>
+        <ul>
+          <li>EPS や BPS を計算せずに、なんとなく PER や PBR だけで判断する</li>
+          <li>1つの指標だけで割安と決めつける</li>
+          <li>高い配当利回りを求めているのに、対応する買い価格を下げて考えていない</li>
+        </ul>
+
+        <h3>具体例</h3>
+        <ol>
+          <li>株価 <strong>1,000</strong>、現在の配当利回り <strong>3%</strong> を入力します。</li>
+          <li>目標配当利回りを <strong>4%</strong> に設定します。</li>
+          <li>結果として <strong>750</strong> が表示され、そこが目標買い価格になります。</li>
+        </ol>
+
+${buildFaqHtml("よくある質問", jaFaqs)}
+
+        <hr>
+        <p style="font-size: 0.9em; color: var(--pico-muted-color);">
+          <strong>注意事項:</strong> 表示結果は入力値に基づく理論値です。将来の株価や投資成果を保証するものではありません。
+        </p>
+      </section>
     `,
-    close: "閉じる",
+    guideContent: `
+      <article>
+        <header>
+          <p><strong>解説ガイド</strong></p>
+          <h1>目標株価は「何円で買いたいか」ではなく「どの条件なら買うか」で決める</h1>
+          <p>
+            指値を置く前に必要なのは、価格への感覚ではなく判断基準です。このガイドでは、PER・PBR・配当利回りを使って目標株価を設計する考え方を整理します。
+          </p>
+        </header>
+
+        <h2>1. まずチャートではなく条件を決める</h2>
+        <p>
+          「最近より下がったから買う」だけでは、相場の雰囲気に引っ張られやすくなります。先に許容できる評価水準を決め、その条件を価格へ変換する方が一貫性があります。
+        </p>
+
+        <h2>2. 投資理由に合った指標を使う</h2>
+        <ul>
+          <li><strong>PER:</strong> 利益成長や収益力を重視するときに向いています。</li>
+          <li><strong>PBR:</strong> 純資産や財務健全性を重視するときに向いています。</li>
+          <li><strong>配当利回り:</strong> インカム収入の水準を重視するときに向いています。</li>
+        </ul>
+
+        <h2>3. 目標指標から株価を逆算する</h2>
+        <p>
+          このツールでは、現在株価と現在指標から EPS・BPS・年間配当を求め、目標 PER・PBR・配当利回りに対応する株価を計算します。数式が見えるので判断の根拠を追いやすい構成です。
+        </p>
+
+        <h2>4. 一番低い価格を「最も厳しい条件」として扱う</h2>
+        <p>
+          複数条件を同時に満たしたいなら、最も低い価格が実質的な基準になります。これがボトルネック指標であり、安全余裕を意識した買い判断に役立ちます。
+        </p>
+
+        <h2>5. 数字は固定せず、前提が変わったら更新する</h2>
+        <p>
+          目標株価は EPS、BPS、配当予想が変われば動きます。決算や配当方針の変更があったら、以前の目標価格に固執せず再計算してください。
+        </p>
+
+        <p>
+          <a href="/ja/" role="button">計算ツールを開く</a>
+        </p>
+      </article>
+    `,
   },
 };

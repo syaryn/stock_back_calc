@@ -9,35 +9,39 @@ export const Layout = (
     description?: string;
     lang?: string;
     pathLang?: string;
+    canonicalPath?: "/" | "/ja/" | "/guide/" | "/ja/guide/";
+    pageType?: "website" | "article";
+    structuredData?: Record<string, unknown>[];
     children?: Child;
   },
 ) => {
   const title = props.title || "Stock Target Price Calculator";
   const description = props.description ||
-    "Calculate theoretical stock prices based on target PER, PBR, and Dividend Yield. A free simulator for value investors.";
+    "Calculate theoretical stock prices based on target PER, PBR, and dividend yield.";
   const baseUrl = "https://stock-back-calc.syaryn.com/";
-
-  // Canonical URL: English → root (/), Japanese → /ja/
-  const explicitLang = props.pathLang || (props.lang === "ja" ? "ja" : "en");
-  const isJa = explicitLang === "ja";
-  const currentUrl = isJa ? `${baseUrl}ja/` : baseUrl;
+  const canonicalPath = props.canonicalPath ||
+    (props.pathLang === "ja" ? "/ja/" : "/");
+  const explicitLang = canonicalPath.startsWith("/ja/") ? "ja" : "en";
+  const currentUrl = new URL(canonicalPath.slice(1), baseUrl).toString();
+  const currentDict = explicitLang === "ja" ? dictionary.ja : dictionary.en;
+  const guideMode = canonicalPath.includes("guide");
 
   const ldJson = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": title,
-    "url": currentUrl,
-    "description": description,
-    "image": `${baseUrl}og-image.png`,
-    "applicationCategory": "FinanceApplication",
-    "operatingSystem": "All",
-    "inLanguage": ["en", "ja"],
-    "offers": {
+    name: title,
+    url: currentUrl,
+    description,
+    image: `${baseUrl}og-image.png`,
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "All",
+    inLanguage: ["en", "ja"],
+    offers: {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD",
+      price: "0",
+      priceCurrency: "USD",
     },
-    "featureList": [
+    featureList: [
       "PER-based target price calculation",
       "PBR-based target price calculation",
       "Dividend yield-based target price calculation",
@@ -46,20 +50,20 @@ export const Layout = (
     ],
   };
 
-  const currentDict = isJa ? dictionary.ja : dictionary.en;
-
   const faqJson = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": currentDict.faq.map((item) => ({
+    mainEntity: currentDict.faq.map((item) => ({
       "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": {
+      name: item.q,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": item.a,
+        text: item.a,
       },
     })),
   };
+
+  const structuredData = [ldJson, faqJson, ...(props.structuredData || [])];
 
   return html`
     <!DOCTYPE html>
@@ -70,31 +74,41 @@ export const Layout = (
         <meta name="description" content="${description}" />
         <title>${title}</title>
         <link rel="canonical" href="${currentUrl}" />
-        <link rel="alternate" hreflang="en" href="${baseUrl}" />
-        <link rel="alternate" hreflang="ja" href="${baseUrl}ja/" />
-        <link rel="alternate" hreflang="x-default" href="${baseUrl}" />
+        <link
+          rel="alternate"
+          hreflang="en"
+          href="${guideMode ? `${baseUrl}guide/` : baseUrl}"
+        />
+        <link
+          rel="alternate"
+          hreflang="ja"
+          href="${guideMode ? `${baseUrl}ja/guide/` : `${baseUrl}ja/`}"
+        />
+        <link
+          rel="alternate"
+          hreflang="x-default"
+          href="${guideMode ? `${baseUrl}guide/` : baseUrl}"
+        />
 
-        <!-- Open Graph -->
         <meta property="og:title" content="${title}" />
         <meta property="og:description" content="${description}" />
         <meta property="og:url" content="${currentUrl}" />
         <meta property="og:image" content="${baseUrl}og-image.png" />
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content="${props.pageType || "website"}" />
         <meta property="og:site_name" content="Stock Target Price Calculator" />
 
-        <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="${title}" />
         <meta name="twitter:description" content="${description}" />
         <meta name="twitter:image" content="${baseUrl}og-image.png" />
 
-        <!-- JSON-LD Structured Data -->
-        <script type="application/ld+json">
-        ${raw(JSON.stringify(ldJson).replace(/\//g, "\\/"))}
-        </script>
-        <script type="application/ld+json">
-        ${raw(JSON.stringify(faqJson).replace(/\//g, "\\/"))}
-        </script>
+        ${raw(
+          structuredData.map((item) =>
+            `<script type="application/ld+json">${
+              JSON.stringify(item).replace(/\//g, "\\/")
+            }</script>`
+          ).join(""),
+        )}
 
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
         <link
@@ -128,30 +142,28 @@ export const Layout = (
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ffffff" />
         <style>
-        /* Custom styles for mobile responsiveness */
-          @media (max-width: 768px) {
+        @media (max-width: 768px) {
           .responsive-grid {
             display: flex;
-          overflow-x: auto;
-          scroll-snap-type: x mandatory;
-          gap: 1rem;
-          padding-bottom: 1rem; /* For scrollbar space if needed */
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1rem;
+            padding-bottom: 1rem;
           }
           .responsive-grid > * {
-            flex: 0 0 85%; /* 85% width to peek next card */
-          scroll-snap-align: center;
+            flex: 0 0 85%;
+            scroll-snap-align: center;
           }
         }
-          @media (min-width: 769px) {
+        @media (min-width: 769px) {
           .responsive-grid {
             display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 1.5rem;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
           }
         }
-          /* Card height standardization */
-          .card-content {
-            height: 100%;
+        .card-content {
+          height: 100%;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
