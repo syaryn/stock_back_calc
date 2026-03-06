@@ -12,6 +12,15 @@ import { serveStatic } from "hono/deno";
 export const app = new Hono();
 const preferredLangCookieName = "preferred_lang";
 
+const persistPreferredLanguage = (c: Context, lang: Language) => {
+  setCookie(c, preferredLangCookieName, lang, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: "Lax",
+    httpOnly: true,
+  });
+};
+
 const getPreferredLanguage = (acceptLanguage: string | undefined): Language => {
   if (!acceptLanguage) return "en";
 
@@ -152,7 +161,11 @@ const renderCalculator = (c: Context, explicitLang?: string) => {
   );
 };
 
-const renderGuide = (c: Context, lang: Language) => {
+const renderGuide = (
+  c: Context,
+  lang: Language,
+  pathLang?: Language,
+) => {
   const canonicalPath = lang === "ja" ? "/ja/guide/" : "/guide/";
   const articleJson = {
     "@context": "https://schema.org",
@@ -169,17 +182,21 @@ const renderGuide = (c: Context, lang: Language) => {
       title={dictionary[lang].guideTitle}
       description={dictionary[lang].guideDescription}
       lang={lang}
-      pathLang={lang}
+      pathLang={pathLang}
       canonicalPath={canonicalPath}
       pageType="article"
       structuredData={[articleJson]}
     >
-      <Guide lang={lang} />
+      <Guide lang={lang} pathLang={pathLang} />
     </Layout>,
   );
 };
 
-const renderAbout = (c: Context, lang: Language) => {
+const renderAbout = (
+  c: Context,
+  lang: Language,
+  pathLang?: Language,
+) => {
   const canonicalPath = lang === "ja" ? "/ja/about/" : "/about/";
   const articleJson = {
     "@context": "https://schema.org",
@@ -196,12 +213,12 @@ const renderAbout = (c: Context, lang: Language) => {
       title={dictionary[lang].aboutPageTitle}
       description={dictionary[lang].aboutDescription}
       lang={lang}
-      pathLang={lang}
+      pathLang={pathLang}
       canonicalPath={canonicalPath}
       pageType="article"
       structuredData={[articleJson]}
     >
-      <About lang={lang} />
+      <About lang={lang} pathLang={pathLang} />
     </Layout>,
   );
 };
@@ -209,12 +226,7 @@ const renderAbout = (c: Context, lang: Language) => {
 app.use("*", async (c, next) => {
   const lang = c.req.query("lang");
   if (lang === "ja" || lang === "en") {
-    setCookie(c, preferredLangCookieName, lang, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "Lax",
-      httpOnly: true,
-    });
+    persistPreferredLanguage(c, lang);
     const url = new URL(c.req.url);
     const isGuidePath = /\/guide\/?$/.test(url.pathname);
     const isAboutPath = /\/about\/?$/.test(url.pathname);
@@ -260,7 +272,10 @@ app.use("/", redirectJapaneseBrowserToLocalizedPath);
 app.use("/guide/", redirectJapaneseBrowserToLocalizedPath);
 app.use("/about/", redirectJapaneseBrowserToLocalizedPath);
 
-app.get("/ja/", (c) => renderCalculator(c, "ja"));
+app.get("/ja/", (c) => {
+  persistPreferredLanguage(c, "ja");
+  return renderCalculator(c, "ja");
+});
 app.get("/ja", (c) => {
   const url = new URL(c.req.url);
   url.pathname = "/ja/";
@@ -272,7 +287,10 @@ app.get("/guide", (c) => {
   url.pathname = "/guide/";
   return c.redirect(url.toString(), 301);
 });
-app.get("/ja/guide/", (c) => renderGuide(c, "ja"));
+app.get("/ja/guide/", (c) => {
+  persistPreferredLanguage(c, "ja");
+  return renderGuide(c, "ja", "ja");
+});
 app.get("/ja/guide", (c) => {
   const url = new URL(c.req.url);
   url.pathname = "/ja/guide/";
@@ -284,7 +302,10 @@ app.get("/about", (c) => {
   url.pathname = "/about/";
   return c.redirect(url.toString(), 301);
 });
-app.get("/ja/about/", (c) => renderAbout(c, "ja"));
+app.get("/ja/about/", (c) => {
+  persistPreferredLanguage(c, "ja");
+  return renderAbout(c, "ja", "ja");
+});
 app.get("/ja/about", (c) => {
   const url = new URL(c.req.url);
   url.pathname = "/ja/about/";
@@ -292,67 +313,37 @@ app.get("/ja/about", (c) => {
 });
 
 app.get("/en/", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/guide/", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/guide/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/guide", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/guide/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/about/", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/about/";
   return c.redirect(url.toString(), 301);
 });
 app.get("/en/about", (c) => {
-  setCookie(c, preferredLangCookieName, "en", {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "Lax",
-    httpOnly: true,
-  });
+  persistPreferredLanguage(c, "en");
   const url = new URL(c.req.url);
   url.pathname = "/about/";
   return c.redirect(url.toString(), 301);

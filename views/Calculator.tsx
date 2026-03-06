@@ -15,13 +15,23 @@ interface CalculatorProps {
 }
 
 export const Calculator = (props: CalculatorProps) => {
-  const { lang, initialState = {}, initialTargets = {}, queryParams = {} } =
-    props;
+  const {
+    lang,
+    pathLang,
+    initialState = {},
+    initialTargets = {},
+    queryParams = {},
+  } = props;
   const initialLang = lang && (lang === "ja" || lang === "en") ? lang : "en";
+  const localizedPathLang = pathLang === "ja" || pathLang === "en"
+    ? pathLang
+    : undefined;
   const localized = dictionary[initialLang];
   const t = (key: string) =>
     localized[key as keyof typeof dictionary.en] || key;
-
+  const homeHref = localizedPathLang === "ja" ? "/ja/" : "/";
+  const guideHref = localizedPathLang === "ja" ? "/ja/guide/" : "/guide/";
+  const aboutHref = localizedPathLang === "ja" ? "/ja/about/" : "/about/";
   const targetLang = initialLang === "en" ? "ja" : "en";
   const fallbackParams = new URLSearchParams(queryParams);
   fallbackParams.delete("lang");
@@ -152,63 +162,57 @@ document.addEventListener('alpine:init', () => {
 
   return html`
     <div x-data="calculator">
-      <nav>
-        <ul>
-          <li><strong>${localized.toolNavLabel}</strong></li>
-        </ul>
-        <ul>
-          <li><a href="${initialLang === "ja"
-            ? "/ja/"
-            : "/"}" aria-current="page">${localized.toolNavLabel}</a></li>
-          <li><a href="${initialLang === "ja"
-            ? "/ja/guide/"
-            : "/guide/"}">${localized.guideNavLabel}</a></li>
-          <li>
-            <a
-              href="https://github.com/syaryn/stock_back_calc"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="contrast"
-              aria-label="GitHub Repository"
-              style="display: flex; align-items: center;"
-            >
-              <picture>
-                <source
-                  srcset="/GitHub_Invertocat_White_Clearspace.svg"
-                  media="(prefers-color-scheme: dark)"
-                />
-                <img
-                  src="/GitHub_Invertocat_Black_Clearspace.svg"
-                  alt="GitHub"
-                  width="48"
-                  height="48"
-                />
-              </picture>
-            </a>
-          </li>
-          <li>
-            <a
-              class="outline"
-              role="button"
-              href="${fallbackHref}"
-              :href="getLangSwitchUrl()"
-              x-text="t('toggleLang')"
-            >
-              ${t("toggleLang")}
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <header class="site-nav">
+        <nav>
+          <ul>
+            <li><strong>${localized.toolNavLabel}</strong></li>
+          </ul>
+          <ul>
+            <li><a href="${homeHref}" aria-current="page">${localized
+              .toolNavLabel}</a></li>
+            <li><a href="${guideHref}">${localized.guideNavLabel}</a></li>
+            <li><a href="${aboutHref}">${localized.aboutNavLabel}</a></li>
+            <li>
+              <a
+                href="https://github.com/syaryn/stock_back_calc"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contrast"
+                aria-label="GitHub Repository"
+                style="display: flex; align-items: center;"
+              >
+                <picture>
+                  <source
+                    srcset="/GitHub_Invertocat_White_Clearspace.svg"
+                    media="(prefers-color-scheme: dark)"
+                  />
+                  <img
+                    src="/GitHub_Invertocat_Black_Clearspace.svg"
+                    alt="GitHub"
+                    width="48"
+                    height="48"
+                  />
+                </picture>
+              </a>
+            </li>
+            <li>
+              <a
+                class="outline"
+                role="button"
+                href="${fallbackHref}"
+                :href="getLangSwitchUrl()"
+                x-text="t('toggleLang')"
+              >
+                ${t("toggleLang")}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </header>
 
-      <section style="margin-block: 1.5rem 2rem;">
-        <p style="margin-bottom: 0.4rem; color: var(--pico-muted-color);">
-          ${localized.introEyebrow}
-        </p>
+      <section class="page-lead">
         <h1>${localized.introHeading}</h1>
         <p>${localized.introBody}</p>
-        <p><a href="${initialLang === "ja"
-          ? "/ja/guide/"
-          : "/guide/"}">${localized.guideLinkLabel}</a></p>
       </section>
 
       <div class="responsive-grid">
@@ -389,26 +393,6 @@ document.addEventListener('alpine:init', () => {
           </template>
         </article>
       </div>
-
-      <section style="margin-top: 2rem;">
-        <p><strong>${localized.guideCta}</strong></p>
-        <p>
-          <a href="${initialLang === "ja"
-            ? "/ja/guide/"
-            : "/guide/"}" role="button" class="outline">
-            ${localized.guideLinkLabel}
-          </a>
-        </p>
-        <p><strong>${localized.aboutCta}</strong></p>
-        <p>
-          <a href="${initialLang === "ja"
-            ? "/ja/about/"
-            : "/about/"}" role="button" class="secondary">
-            ${localized.aboutLinkLabel}
-          </a>
-        </p>
-      </section>
-
       <script>
       ${raw(script)}
       </script>
