@@ -9,7 +9,13 @@ export const Layout = (
     description?: string;
     lang?: string;
     pathLang?: string;
-    canonicalPath?: "/" | "/ja/" | "/guide/" | "/ja/guide/";
+    canonicalPath?:
+      | "/"
+      | "/ja/"
+      | "/guide/"
+      | "/ja/guide/"
+      | "/about/"
+      | "/ja/about/";
     pageType?: "website" | "article";
     structuredData?: Record<string, unknown>[];
     children?: Child;
@@ -24,7 +30,11 @@ export const Layout = (
   const explicitLang = canonicalPath.startsWith("/ja/") ? "ja" : "en";
   const currentUrl = new URL(canonicalPath.slice(1), baseUrl).toString();
   const currentDict = explicitLang === "ja" ? dictionary.ja : dictionary.en;
-  const guideMode = canonicalPath.includes("guide");
+  const articleSection = canonicalPath.includes("guide")
+    ? "guide"
+    : canonicalPath.includes("about")
+    ? "about"
+    : null;
 
   const ldJson = {
     "@context": "https://schema.org",
@@ -63,7 +73,13 @@ export const Layout = (
     })),
   };
 
-  const structuredData = [ldJson, faqJson, ...(props.structuredData || [])];
+  const defaultStructuredData = props.pageType === "article"
+    ? [faqJson]
+    : [ldJson, faqJson];
+  const structuredData = [
+    ...defaultStructuredData,
+    ...(props.structuredData || []),
+  ];
 
   return html`
     <!DOCTYPE html>
@@ -77,17 +93,29 @@ export const Layout = (
         <link
           rel="alternate"
           hreflang="en"
-          href="${guideMode ? `${baseUrl}guide/` : baseUrl}"
+          href="${articleSection === "guide"
+            ? `${baseUrl}guide/`
+            : articleSection === "about"
+            ? `${baseUrl}about/`
+            : baseUrl}"
         />
         <link
           rel="alternate"
           hreflang="ja"
-          href="${guideMode ? `${baseUrl}ja/guide/` : `${baseUrl}ja/`}"
+          href="${articleSection === "guide"
+            ? `${baseUrl}ja/guide/`
+            : articleSection === "about"
+            ? `${baseUrl}ja/about/`
+            : `${baseUrl}ja/`}"
         />
         <link
           rel="alternate"
           hreflang="x-default"
-          href="${guideMode ? `${baseUrl}guide/` : baseUrl}"
+          href="${articleSection === "guide"
+            ? `${baseUrl}guide/`
+            : articleSection === "about"
+            ? `${baseUrl}about/`
+            : baseUrl}"
         />
 
         <meta property="og:title" content="${title}" />

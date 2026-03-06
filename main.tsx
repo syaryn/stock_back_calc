@@ -2,6 +2,7 @@ import { Context, Hono } from "hono";
 import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
 import { Guide } from "./views/Guide.tsx";
+import { About } from "./views/About.tsx";
 import { dictionary, Language } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
@@ -58,6 +59,24 @@ app.get("/sitemap.xml", (c) => {
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://stock-back-calc.syaryn.com/about/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/about/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/ja/about/" />
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://stock-back-calc.syaryn.com/ja/about/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://stock-back-calc.syaryn.com/about/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://stock-back-calc.syaryn.com/about/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://stock-back-calc.syaryn.com/ja/about/" />
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>`,
   );
@@ -134,14 +153,44 @@ const renderGuide = (c: Context, lang: Language) => {
   );
 };
 
+const renderAbout = (c: Context, lang: Language) => {
+  const canonicalPath = lang === "ja" ? "/ja/about/" : "/about/";
+  const articleJson = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: dictionary[lang].aboutPageTitle,
+    description: dictionary[lang].aboutDescription,
+    inLanguage: lang,
+    url: `https://stock-back-calc.syaryn.com${canonicalPath}`,
+    mainEntityOfPage: `https://stock-back-calc.syaryn.com${canonicalPath}`,
+  };
+
+  return c.html(
+    <Layout
+      title={dictionary[lang].aboutPageTitle}
+      description={dictionary[lang].aboutDescription}
+      lang={lang}
+      pathLang={lang}
+      canonicalPath={canonicalPath}
+      pageType="article"
+      structuredData={[articleJson]}
+    >
+      <About lang={lang} />
+    </Layout>,
+  );
+};
+
 app.use("*", async (c, next) => {
   const lang = c.req.query("lang");
   if (lang === "ja" || lang === "en") {
     const url = new URL(c.req.url);
     const isGuidePath = /\/guide\/?$/.test(url.pathname);
+    const isAboutPath = /\/about\/?$/.test(url.pathname);
     url.searchParams.delete("lang");
     url.pathname = isGuidePath
       ? (lang === "ja" ? "/ja/guide/" : "/guide/")
+      : isAboutPath
+      ? (lang === "ja" ? "/ja/about/" : "/about/")
       : (lang === "ja" ? "/ja/" : "/");
     return c.redirect(url.toString(), 301);
   }
@@ -166,6 +215,18 @@ app.get("/ja/guide", (c) => {
   url.pathname = "/ja/guide/";
   return c.redirect(url.toString(), 301);
 });
+app.get("/about/", (c) => renderAbout(c, "en"));
+app.get("/about", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/about/";
+  return c.redirect(url.toString(), 301);
+});
+app.get("/ja/about/", (c) => renderAbout(c, "ja"));
+app.get("/ja/about", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/ja/about/";
+  return c.redirect(url.toString(), 301);
+});
 
 app.get("/en/", (c) => {
   const url = new URL(c.req.url);
@@ -185,6 +246,16 @@ app.get("/en/guide/", (c) => {
 app.get("/en/guide", (c) => {
   const url = new URL(c.req.url);
   url.pathname = "/guide/";
+  return c.redirect(url.toString(), 301);
+});
+app.get("/en/about/", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/about/";
+  return c.redirect(url.toString(), 301);
+});
+app.get("/en/about", (c) => {
+  const url = new URL(c.req.url);
+  url.pathname = "/about/";
   return c.redirect(url.toString(), 301);
 });
 

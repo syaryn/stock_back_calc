@@ -13,6 +13,7 @@ Deno.test("GET / defaults to English", async () => {
   const text = await res.text();
   assertStringIncludes(text, "Current Values");
   assertStringIncludes(text, "Read the guide");
+  assertStringIncludes(text, "Read the overview");
 });
 
 Deno.test("GET /ja/ returns Japanese", async () => {
@@ -37,6 +38,27 @@ Deno.test("GET /guide/ returns guide page metadata", async () => {
     text,
     'rel="canonical" href="https://stock-back-calc.syaryn.com/guide/"',
   );
+  assertStringIncludes(text, '"@type":"Article"');
+});
+
+Deno.test("GET /about/ returns about page metadata", async () => {
+  const req = new Request("http://localhost:8000/about/");
+  const res = await app.request(req);
+  assertEquals(res.status, 200);
+  const text = await res.text();
+  assertStringIncludes(
+    text,
+    "Why Use a Stock Target Price Calculator Before Buying a Stock",
+  );
+  assertStringIncludes(
+    text,
+    'rel="canonical" href="https://stock-back-calc.syaryn.com/about/"',
+  );
+  assertStringIncludes(
+    text,
+    "What this stock target price calculator helps you decide",
+  );
+  assertStringIncludes(text, '"@type":"Article"');
 });
 
 Deno.test("GET /ja/guide/ returns Japanese guide", async () => {
@@ -46,6 +68,15 @@ Deno.test("GET /ja/guide/ returns Japanese guide", async () => {
   const text = await res.text();
   assertStringIncludes(text, "目標株価の決め方ガイド");
   assertStringIncludes(text, "計算ツールを開く");
+});
+
+Deno.test("GET /ja/about/ returns Japanese about page", async () => {
+  const req = new Request("http://localhost:8000/ja/about/");
+  const res = await app.request(req);
+  assertEquals(res.status, 200);
+  const text = await res.text();
+  assertStringIncludes(text, "この目標株価逆算ツールが役立つ理由");
+  assertStringIncludes(text, "この目標株価逆算ツールで分かること");
 });
 
 Deno.test("GET /favicon.ico returns 200", async () => {
@@ -63,6 +94,8 @@ Deno.test("GET /sitemap.xml includes guide pages only as fixed URLs", async () =
   const text = await res.text();
   assertStringIncludes(text, "https://stock-back-calc.syaryn.com/guide/");
   assertStringIncludes(text, "https://stock-back-calc.syaryn.com/ja/guide/");
+  assertStringIncludes(text, "https://stock-back-calc.syaryn.com/about/");
+  assertStringIncludes(text, "https://stock-back-calc.syaryn.com/ja/about/");
 });
 
 Deno.test("GET /?stockPrice=1000&currentPer=10&targetPer=15 returns calculated result", async () => {

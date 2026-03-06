@@ -7,7 +7,6 @@ interface GuideProps {
 
 export const Guide = ({ lang }: GuideProps) => {
   const t = dictionary[lang];
-  const toolHref = lang === "ja" ? "/ja/" : "/";
   const guideHref = lang === "ja" ? "/ja/guide/" : "/guide/";
   const switchHref = lang === "ja" ? "/guide/" : "/ja/guide/";
 
@@ -18,7 +17,8 @@ export const Guide = ({ lang }: GuideProps) => {
           <li><strong>${t.guideNavLabel}</strong></li>
         </ul>
         <ul>
-          <li><a href="${toolHref}">${t.toolNavLabel}</a></li>
+          <li><a href="${lang === "ja" ? "/ja/" : "/"}">${t
+            .toolNavLabel}</a></li>
           <li><a href="${guideHref}" aria-current="page">${t
             .guideNavLabel}</a></li>
           <li><a class="outline" href="${switchHref}">${t.toggleLang}</a></li>
@@ -28,9 +28,6 @@ export const Guide = ({ lang }: GuideProps) => {
 
     <section>
       ${raw(t.guideContent)}
-      <p>
-        <a href="${toolHref}">${t.toolLinkLabel}</a>
-      </p>
     </section>
   `;
 };

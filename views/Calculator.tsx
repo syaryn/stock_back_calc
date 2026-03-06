@@ -399,7 +399,14 @@ document.addEventListener('alpine:init', () => {
             ${localized.guideLinkLabel}
           </a>
         </p>
-        <div x-html="t('aboutContent')">${raw(localized.aboutContent)}</div>
+        <p><strong>${localized.aboutCta}</strong></p>
+        <p>
+          <a href="${initialLang === "ja"
+            ? "/ja/about/"
+            : "/about/"}" role="button" class="secondary">
+            ${localized.aboutLinkLabel}
+          </a>
+        </p>
       </section>
 
       <script>

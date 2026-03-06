@@ -70,6 +70,10 @@ export const dictionary = {
       "How to Set a Stock Target Price with PER, PBR, and Dividend Yield",
     guideDescription:
       "A practical guide to setting stock buy targets with PER, PBR, and dividend yield, with examples and a direct link back to the calculator.",
+    aboutPageTitle:
+      "Why Use a Stock Target Price Calculator Before Buying a Stock",
+    aboutDescription:
+      "Learn how a stock target price calculator helps define buy rules with PER, PBR, and dividend yield instead of relying on intuition.",
     currentValues: "Current Values",
     targetValues: "Target Indicators",
     results: "Target Prices",
@@ -102,6 +106,7 @@ export const dictionary = {
     bottleneckDesc: "Bottleneck Indicator",
     faq: enFaqs,
     guideNavLabel: "Guide",
+    aboutNavLabel: "About",
     toolNavLabel: "Calculator",
     introEyebrow: "Stock valuation and buy-price planning",
     introHeading: "Set a target stock price with explicit valuation rules",
@@ -110,6 +115,8 @@ export const dictionary = {
     guideCta:
       "Need a deeper explanation? Read the practical guide to target prices.",
     guideLinkLabel: "Read the guide",
+    aboutCta: "Want the background first? Read why this calculator is useful.",
+    aboutLinkLabel: "Read the overview",
     toolLinkLabel: "Open the calculator",
     aboutContent: `
       <section>
@@ -211,6 +218,10 @@ ${buildFaqHtml("Frequently Asked Questions", enFaqs)}
       "目標株価の決め方ガイド | PER・PBR・配当利回りで買い価格を考える",
     guideDescription:
       "PER・PBR・配当利回りを使って目標株価を決める考え方を、日本語の具体例付きで解説するガイドページです。",
+    aboutPageTitle:
+      "この目標株価逆算ツールが役立つ理由 | PER・PBR・配当利回りの考え方",
+    aboutDescription:
+      "PER・PBR・配当利回りから買い価格を逆算する意味と、このツールで整理できる判断軸を日本語でまとめた紹介ページです。",
     currentValues: "現在値",
     targetValues: "目標指標",
     results: "目標株価",
@@ -243,6 +254,7 @@ ${buildFaqHtml("Frequently Asked Questions", enFaqs)}
     bottleneckDesc: "ボトルネック指標",
     faq: jaFaqs,
     guideNavLabel: "解説ガイド",
+    aboutNavLabel: "このツールについて",
     toolNavLabel: "計算ツール",
     introEyebrow: "株価の逆算と指値設計",
     introHeading: "感覚ではなく条件で目標株価を決める",
@@ -251,6 +263,9 @@ ${buildFaqHtml("Frequently Asked Questions", enFaqs)}
     guideCta:
       "考え方から整理したい場合は、目標株価の決め方ガイドを先に読んでください。",
     guideLinkLabel: "解説ガイドを読む",
+    aboutCta:
+      "このツールの使いどころを先に知りたい場合はこちらを読んでください。",
+    aboutLinkLabel: "このツールについて読む",
     toolLinkLabel: "計算ツールを開く",
     aboutContent: `
       <section>
