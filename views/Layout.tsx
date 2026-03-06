@@ -170,6 +170,22 @@ export const Layout = (
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ffffff" />
         <style>
+        main.container {
+          padding-top: 2rem;
+          padding-bottom: 3rem;
+        }
+        .site-nav {
+          margin-bottom: 2rem;
+        }
+        .site-nav nav {
+          margin-bottom: 0;
+        }
+        .page-lead {
+          margin-block: 0 2rem;
+        }
+        .page-body {
+          margin-block: 0;
+        }
         @media (max-width: 768px) {
           .responsive-grid {
             display: flex;

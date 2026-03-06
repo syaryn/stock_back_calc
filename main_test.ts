@@ -12,8 +12,13 @@ Deno.test("GET / defaults to English", async () => {
   assertEquals(res.status, 200);
   const text = await res.text();
   assertStringIncludes(text, "Current Values");
-  assertStringIncludes(text, "Read the guide");
-  assertStringIncludes(text, "Read the overview");
+  assertStringIncludes(
+    text,
+    "Stock Target Price Calculator for PER, PBR, and Dividend Yield",
+  );
+  assertStringIncludes(text, "Guide");
+  assertStringIncludes(text, 'href="/about/"');
+  assertStringIncludes(text, "About");
 });
 
 Deno.test("GET / with Japanese Accept-Language redirects to /ja/", async () => {
@@ -40,7 +45,10 @@ Deno.test("GET /ja/ returns Japanese", async () => {
   assertEquals(res.status, 200);
   const text = await res.text();
   assertStringIncludes(text, "現在値");
-  assertStringIncludes(text, "感覚ではなく条件で目標株価を決める");
+  assertStringIncludes(
+    text,
+    "目標株価を計算 | PER・PBR・配当利回りから買い価格を逆算",
+  );
 });
 
 Deno.test("GET /guide/ returns guide page metadata", async () => {
@@ -56,6 +64,7 @@ Deno.test("GET /guide/ returns guide page metadata", async () => {
     text,
     'rel="canonical" href="https://stock-back-calc.syaryn.com/guide/"',
   );
+  assertStringIncludes(text, 'href="/about/"');
   assertStringIncludes(text, '"@type":"Article"');
 });
 
@@ -110,7 +119,7 @@ Deno.test("GET /?lang=en sets preferred_lang cookie and redirects to canonical E
   );
 });
 
-Deno.test("GET /en/ sets preferred_lang cookie and redirects to canonical English path", async () => {
+Deno.test("GET /en/ redirects to canonical English path and persists preferred_lang cookie", async () => {
   const req = new Request("http://localhost:8000/en/");
   const res = await app.request(req);
   assertEquals(res.status, 301);
@@ -132,6 +141,28 @@ Deno.test("GET / with preferred_lang cookie skips Japanese auto redirect", async
   assertEquals(res.status, 200);
 });
 
+Deno.test("GET /?lang=en on guide page redirects to English guide canonical path", async () => {
+  const req = new Request("http://localhost:8000/ja/guide/?lang=en");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/guide/");
+  assertStringIncludes(
+    res.headers.get("set-cookie") || "",
+    "preferred_lang=en",
+  );
+});
+
+Deno.test("GET /?lang=ja on about page redirects to Japanese about canonical path", async () => {
+  const req = new Request("http://localhost:8000/about/?lang=ja");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/about/");
+  assertStringIncludes(
+    res.headers.get("set-cookie") || "",
+    "preferred_lang=ja",
+  );
+});
+
 Deno.test("GET /ja/guide/ returns Japanese guide", async () => {
   const req = new Request("http://localhost:8000/ja/guide/");
   const res = await app.request(req);
@@ -141,13 +172,57 @@ Deno.test("GET /ja/guide/ returns Japanese guide", async () => {
   assertStringIncludes(text, "計算ツールを開く");
 });
 
+Deno.test("GET /en/guide/ redirects to canonical English guide path", async () => {
+  const req = new Request("http://localhost:8000/en/guide/");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/guide/");
+  assertStringIncludes(
+    res.headers.get("set-cookie") || "",
+    "preferred_lang=en",
+  );
+});
+
 Deno.test("GET /ja/about/ returns Japanese about page", async () => {
   const req = new Request("http://localhost:8000/ja/about/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
   const text = await res.text();
   assertStringIncludes(text, "この目標株価逆算ツールが役立つ理由");
-  assertStringIncludes(text, "この目標株価逆算ツールで分かること");
+  assertStringIncludes(text, "PER・PBR・配当利回りから目標株価を逆算するとは");
+  assertStringIncludes(text, "目標株価計算ツール");
+});
+
+Deno.test("GET /en/about/ redirects to canonical English about path", async () => {
+  const req = new Request("http://localhost:8000/en/about/");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/about/");
+  assertStringIncludes(
+    res.headers.get("set-cookie") || "",
+    "preferred_lang=en",
+  );
+});
+
+Deno.test("GET /en path without trailing slash redirects to /en/", async () => {
+  const req = new Request("http://localhost:8000/en");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/");
+});
+
+Deno.test("GET /en/guide path without trailing slash redirects to /en/guide/", async () => {
+  const req = new Request("http://localhost:8000/en/guide");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/guide/");
+});
+
+Deno.test("GET /en/about path without trailing slash redirects to /en/about/", async () => {
+  const req = new Request("http://localhost:8000/en/about");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/about/");
 });
 
 Deno.test("GET /favicon.ico returns 200", async () => {

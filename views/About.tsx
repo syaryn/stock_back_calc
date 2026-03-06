@@ -3,17 +3,21 @@ import { dictionary, Language } from "../utils/i18n.ts";
 
 interface AboutProps {
   lang: Language;
+  pathLang?: Language;
 }
 
-export const About = ({ lang }: AboutProps) => {
+export const About = ({ lang, pathLang }: AboutProps) => {
   const t = dictionary[lang];
-  const toolHref = lang === "ja" ? "/ja/" : "/";
-  const aboutHref = lang === "ja" ? "/ja/about/" : "/about/";
-  const guideHref = lang === "ja" ? "/ja/guide/" : "/guide/";
-  const switchHref = lang === "ja" ? "/about/" : "/ja/about/";
+  const localizedPathLang = pathLang === "ja" || pathLang === "en"
+    ? pathLang
+    : undefined;
+  const toolHref = localizedPathLang === "ja" ? "/ja/" : "/";
+  const aboutHref = localizedPathLang === "ja" ? "/ja/about/" : "/about/";
+  const guideHref = localizedPathLang === "ja" ? "/ja/guide/" : "/guide/";
+  const switchHref = lang === "ja" ? "/en/about/" : "/ja/about/";
 
   return html`
-    <section style="margin-block: 2rem 1rem;">
+    <header class="site-nav">
       <nav>
         <ul>
           <li><strong>${t.aboutNavLabel}</strong></li>
@@ -23,12 +27,39 @@ export const About = ({ lang }: AboutProps) => {
           <li><a href="${guideHref}">${t.guideNavLabel}</a></li>
           <li><a href="${aboutHref}" aria-current="page">${t
             .aboutNavLabel}</a></li>
-          <li><a class="outline" href="${switchHref}">${t.toggleLang}</a></li>
+          <li>
+            <a
+              href="https://github.com/syaryn/stock_back_calc"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="contrast"
+              aria-label="GitHub Repository"
+              style="display: flex; align-items: center;"
+            >
+              <picture>
+                <source
+                  srcset="/GitHub_Invertocat_White_Clearspace.svg"
+                  media="(prefers-color-scheme: dark)"
+                />
+                <img
+                  src="/GitHub_Invertocat_Black_Clearspace.svg"
+                  alt="GitHub"
+                  width="48"
+                  height="48"
+                />
+              </picture>
+            </a>
+          </li>
+          <li>
+            <a class="outline" role="button" href="${switchHref}">
+              ${t.toggleLang}
+            </a>
+          </li>
         </ul>
       </nav>
-    </section>
+    </header>
 
-    <section>
+    <section class="page-body">
       ${raw(t.aboutContent)}
     </section>
   `;

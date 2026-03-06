@@ -3,8 +3,8 @@ deno = "latest"
 lefthook = "latest"
 
 [tasks]
-test = "deno test"
-lint = "deno lint"
-fmt = "deno fmt"
+test = "deno task test"
+lint = "deno task lint"
+fmt = "deno task fmt"
 check = "deno task check"
-start = "deno serve --watch main.tsx"
+start = "deno task dev"
