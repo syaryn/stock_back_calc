@@ -2,12 +2,17 @@
   "version": "5",
   "specifiers": {
     "jsr:@hono/hono@^4.12.1": "4.12.1",
+    "jsr:@i18next/i18next@*": "25.8.14",
+    "jsr:@i18next/i18next@^25.8.14": "25.8.14",
     "jsr:@std/assert@^1.0.19": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.12"
   },
   "jsr": {
     "@hono/hono@4.12.1": {
       "integrity": "80732f25f7e3744b12d8456a0ee9f857177952e13b99381059f19c9159c4ffdd"
+    },
+    "@i18next/i18next@25.8.14": {
+      "integrity": "145c956ac2af5a7f15c33f1ff0b0b2f513c7ef85187f04cab2e7501e2359a339"
     },
     "@std/assert@1.0.19": {
       "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
@@ -22,6 +27,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@hono/hono@^4.12.1",
+      "jsr:@i18next/i18next@^25.8.14",
       "jsr:@std/assert@^1.0.19"
     ]
   }

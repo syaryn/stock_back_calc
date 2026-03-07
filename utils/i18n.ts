@@ -1,3 +1,5 @@
+import i18next from "@i18next/i18next";
+
 export type Language = "en" | "ja";
 
 export const i18nConfig = {
@@ -61,60 +63,61 @@ const jaFaqs: FaqItem[] = [
   },
 ];
 
-export const dictionary = {
+export const resources = {
   en: {
-    title:
-      "Stock Target Price Calculator | Reverse a Buy Price from PER, PBR, and Dividend Yield",
-    description:
-      "Reverse-calculate a stock buy price from your target PER, PBR, and dividend yield. Includes investment context, formulas, and practical examples.",
-    guideTitle:
-      "How to Set a Stock Target Price with PER, PBR, and Dividend Yield",
-    guideDescription:
-      "A practical guide to setting stock buy targets with PER, PBR, and dividend yield, with examples and a direct link back to the calculator.",
-    aboutPageTitle:
-      "Why Use a Stock Target Price Calculator Before Buying a Stock",
-    aboutDescription:
-      "Learn how a stock target price calculator helps define buy rules with PER, PBR, and dividend yield instead of relying on intuition.",
-    currentValues: "Current Values",
-    targetValues: "Target Indicators",
-    results: "Target Prices",
-    stockPrice: "Stock Price",
-    eps: "EPS (Earnings Per Share)",
-    bps: "BPS (Book Value Per Share)",
-    dividend: "Dividend",
-    currentPer: "Current PER",
-    currentPbr: "Current PBR",
-    currentYield: "Current Yield (%)",
-    targetPer: "Target PER",
-    targetPbr: "Target PBR",
-    targetYield: "Target Yield (%)",
-    calculatedPrice: "Target Price",
-    upside: "Upside",
-    downside: "Downside",
-    inputRequired: "Input required",
-    language: "Language",
-    toggleLang: "日本語",
-    optional: "(Optional)",
-    perPrice: "PER Based",
-    pbrPrice: "PBR Based",
-    yieldPrice: "Yield Based",
-    finalPrice: "Result: Price satisfying all conditions",
-    bottleneck: "Bottleneck Indicator",
-    resultPer: "PER",
-    resultPbr: "PBR",
-    resultYield: "Yield (%)",
-    aboutTitle: "Why this calculator is useful",
-    bottleneckDesc: "Bottleneck Indicator",
-    faq: enFaqs,
-    guideNavLabel: "Guide",
-    aboutNavLabel: "About",
-    toolNavLabel: "Target Price Calculator",
-    introHeading:
-      "Stock Target Price Calculator for PER, PBR, and Dividend Yield",
-    introBody:
-      "Use this calculator to reverse a buy price from the valuation level you want. It is built for investors who want a repeatable rule instead of placing limit orders by intuition.",
-    toolLinkLabel: "Open the calculator",
-    aboutContent: `
+    translation: {
+      title:
+        "Stock Target Price Calculator | Reverse a Buy Price from PER, PBR, and Dividend Yield",
+      description:
+        "Reverse-calculate a stock buy price from your target PER, PBR, and dividend yield. Includes investment context, formulas, and practical examples.",
+      guideTitle:
+        "How to Set a Stock Target Price with PER, PBR, and Dividend Yield",
+      guideDescription:
+        "A practical guide to setting stock buy targets with PER, PBR, and dividend yield, with examples and a direct link back to the calculator.",
+      aboutPageTitle:
+        "Why Use a Stock Target Price Calculator Before Buying a Stock",
+      aboutDescription:
+        "Learn how a stock target price calculator helps define buy rules with PER, PBR, and dividend yield instead of relying on intuition.",
+      currentValues: "Current Values",
+      targetValues: "Target Indicators",
+      results: "Target Prices",
+      stockPrice: "Stock Price",
+      eps: "EPS (Earnings Per Share)",
+      bps: "BPS (Book Value Per Share)",
+      dividend: "Dividend",
+      currentPer: "Current PER",
+      currentPbr: "Current PBR",
+      currentYield: "Current Yield (%)",
+      targetPer: "Target PER",
+      targetPbr: "Target PBR",
+      targetYield: "Target Yield (%)",
+      calculatedPrice: "Target Price",
+      upside: "Upside",
+      downside: "Downside",
+      inputRequired: "Input required",
+      language: "Language",
+      toggleLang: "日本語",
+      optional: "(Optional)",
+      perPrice: "PER Based",
+      pbrPrice: "PBR Based",
+      yieldPrice: "Yield Based",
+      finalPrice: "Result: Price satisfying all conditions",
+      bottleneck: "Bottleneck Indicator",
+      resultPer: "PER",
+      resultPbr: "PBR",
+      resultYield: "Yield (%)",
+      aboutTitle: "Why this calculator is useful",
+      bottleneckDesc: "Bottleneck Indicator",
+      faq: enFaqs,
+      guideNavLabel: "Guide",
+      aboutNavLabel: "About",
+      toolNavLabel: "Target Price Calculator",
+      introHeading:
+        "Stock Target Price Calculator for PER, PBR, and Dividend Yield",
+      introBody:
+        "Use this calculator to reverse a buy price from the valuation level you want. It is built for investors who want a repeatable rule instead of placing limit orders by intuition.",
+      toolLinkLabel: "Open the calculator",
+      aboutContent: `
       <section>
         <h2>What this stock target price calculator helps you decide</h2>
         <p>
@@ -163,7 +166,7 @@ ${buildFaqHtml("Frequently Asked Questions", enFaqs)}
         </p>
       </section>
     `,
-    guideContent: `
+      guideContent: `
       <section>
         <h2>How to think about a target stock price before placing a limit order</h2>
         <p>
@@ -202,58 +205,60 @@ ${buildFaqHtml("Frequently Asked Questions", enFaqs)}
         </p>
       </section>
     `,
+    },
   },
   ja: {
-    title: "目標株価計算ツール | PER・PBR・配当利回りから買い価格を逆算",
-    description:
-      "PER・PBR・配当利回りの目標水準から買いたい株価を逆算できる無料ツール。計算式、使い方、投資判断の考え方も日本語で解説します。",
-    guideTitle:
-      "目標株価の決め方ガイド | PER・PBR・配当利回りで買い価格を考える",
-    guideDescription:
-      "PER・PBR・配当利回りを使って目標株価を決める考え方を、日本語の具体例付きで解説するガイドページです。",
-    aboutPageTitle:
-      "この目標株価逆算ツールが役立つ理由 | PER・PBR・配当利回りの考え方",
-    aboutDescription:
-      "PER・PBR・配当利回りから買い価格を逆算する意味と、このツールで整理できる判断軸を日本語でまとめた紹介ページです。",
-    currentValues: "現在値",
-    targetValues: "目標指標",
-    results: "目標株価",
-    stockPrice: "株価",
-    eps: "EPS（1株利益）",
-    bps: "BPS（1株純資産）",
-    dividend: "年間配当",
-    currentPer: "現在 PER",
-    currentPbr: "現在 PBR",
-    currentYield: "現在 配当利回り (%)",
-    targetPer: "目標 PER",
-    targetPbr: "目標 PBR",
-    targetYield: "目標 配当利回り (%)",
-    calculatedPrice: "目標株価",
-    upside: "上値余地",
-    downside: "下落余地",
-    inputRequired: "入力が必要です",
-    language: "言語",
-    toggleLang: "English",
-    optional: "任意",
-    perPrice: "PER ベース",
-    pbrPrice: "PBR ベース",
-    yieldPrice: "利回りベース",
-    finalPrice: "結果: すべての条件を満たす価格",
-    bottleneck: "ボトルネック指標",
-    resultPer: "PER",
-    resultPbr: "PBR",
-    resultYield: "配当利回り (%)",
-    aboutTitle: "このツールが役立つ理由",
-    bottleneckDesc: "ボトルネック指標",
-    faq: jaFaqs,
-    guideNavLabel: "解説ガイド",
-    aboutNavLabel: "このツールについて",
-    toolNavLabel: "目標株価計算ツール",
-    introHeading: "目標株価を計算 | PER・PBR・配当利回りから買い価格を逆算",
-    introBody:
-      "このツールは、欲しい利回りや許容したい PER・PBR から買い価格を逆算します。なんとなく安そうだからではなく、再現できるルールで指値を置きたい投資家向けです。",
-    toolLinkLabel: "目標株価計算ツールを開く",
-    aboutContent: `
+    translation: {
+      title: "目標株価計算ツール | PER・PBR・配当利回りから買い価格を逆算",
+      description:
+        "PER・PBR・配当利回りの目標水準から買いたい株価を逆算できる無料ツール。計算式、使い方、投資判断の考え方も日本語で解説します。",
+      guideTitle:
+        "目標株価の決め方ガイド | PER・PBR・配当利回りで買い価格を考える",
+      guideDescription:
+        "PER・PBR・配当利回りを使って目標株価を決める考え方を、日本語の具体例付きで解説するガイドページです。",
+      aboutPageTitle:
+        "この目標株価逆算ツールが役立つ理由 | PER・PBR・配当利回りの考え方",
+      aboutDescription:
+        "PER・PBR・配当利回りから買い価格を逆算する意味と、このツールで整理できる判断軸を日本語でまとめた紹介ページです。",
+      currentValues: "現在値",
+      targetValues: "目標指標",
+      results: "目標株価",
+      stockPrice: "株価",
+      eps: "EPS（1株利益）",
+      bps: "BPS（1株純資産）",
+      dividend: "年間配当",
+      currentPer: "現在 PER",
+      currentPbr: "現在 PBR",
+      currentYield: "現在 配当利回り (%)",
+      targetPer: "目標 PER",
+      targetPbr: "目標 PBR",
+      targetYield: "目標 配当利回り (%)",
+      calculatedPrice: "目標株価",
+      upside: "上値余地",
+      downside: "下落余地",
+      inputRequired: "入力が必要です",
+      language: "言語",
+      toggleLang: "English",
+      optional: "任意",
+      perPrice: "PER ベース",
+      pbrPrice: "PBR ベース",
+      yieldPrice: "利回りベース",
+      finalPrice: "結果: すべての条件を満たす価格",
+      bottleneck: "ボトルネック指標",
+      resultPer: "PER",
+      resultPbr: "PBR",
+      resultYield: "配当利回り (%)",
+      aboutTitle: "このツールが役立つ理由",
+      bottleneckDesc: "ボトルネック指標",
+      faq: jaFaqs,
+      guideNavLabel: "解説ガイド",
+      aboutNavLabel: "このツールについて",
+      toolNavLabel: "目標株価計算ツール",
+      introHeading: "目標株価を計算 | PER・PBR・配当利回りから買い価格を逆算",
+      introBody:
+        "このツールは、欲しい利回りや許容したい PER・PBR から買い価格を逆算します。なんとなく安そうだからではなく、再現できるルールで指値を置きたい投資家向けです。",
+      toolLinkLabel: "目標株価計算ツールを開く",
+      aboutContent: `
       <section>
         <h2>PER・PBR・配当利回りから目標株価を逆算するとは</h2>
         <p>
@@ -302,7 +307,7 @@ ${buildFaqHtml("よくある質問", jaFaqs)}
         </p>
       </section>
     `,
-    guideContent: `
+      guideContent: `
       <section>
         <h2>目標株価の決め方：PER・PBR・配当利回りで指値の根拠を作る</h2>
         <p>
@@ -346,5 +351,16 @@ ${buildFaqHtml("よくある質問", jaFaqs)}
         </p>
       </section>
     `,
+    },
   },
 };
+
+// Initialize i18next synchronously at module load time
+await i18next.init({
+  lng: i18nConfig.defaultLocale,
+  fallbackLng: i18nConfig.defaultLocale,
+  supportedLngs: i18nConfig.locales,
+  resources,
+});
+
+export default i18next;

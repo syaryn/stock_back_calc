@@ -4,7 +4,7 @@ import { Layout } from "./views/Layout.tsx";
 import { Calculator } from "./views/Calculator.tsx";
 import { Guide } from "./views/Guide.tsx";
 import { About } from "./views/About.tsx";
-import { dictionary, Language } from "./utils/i18n.ts";
+import i18next, { Language } from "./utils/i18n.ts";
 import { MarketState } from "./utils/pricing.ts";
 
 import { serveStatic } from "hono/deno";
@@ -142,10 +142,12 @@ const renderCalculator = (c: Context, explicitLang?: string) => {
 
   const pathLang = explicitLang;
 
+  const t = i18next.getFixedT(lang);
+
   return c.html(
     <Layout
-      title={dictionary[lang].title}
-      description={dictionary[lang].description}
+      title={t("title")}
+      description={t("description")}
       lang={lang}
       pathLang={pathLang}
       canonicalPath={lang === "ja" ? "/ja/" : "/"}
@@ -166,12 +168,13 @@ const renderGuide = (
   lang: Language,
   pathLang?: Language,
 ) => {
+  const t = i18next.getFixedT(lang);
   const canonicalPath = lang === "ja" ? "/ja/guide/" : "/guide/";
   const articleJson = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: dictionary[lang].guideTitle,
-    description: dictionary[lang].guideDescription,
+    headline: t("guideTitle"),
+    description: t("guideDescription"),
     inLanguage: lang,
     url: `https://stock-back-calc.syaryn.com${canonicalPath}`,
     mainEntityOfPage: `https://stock-back-calc.syaryn.com${canonicalPath}`,
@@ -179,8 +182,8 @@ const renderGuide = (
 
   return c.html(
     <Layout
-      title={dictionary[lang].guideTitle}
-      description={dictionary[lang].guideDescription}
+      title={t("guideTitle")}
+      description={t("guideDescription")}
       lang={lang}
       pathLang={pathLang}
       canonicalPath={canonicalPath}
@@ -197,12 +200,13 @@ const renderAbout = (
   lang: Language,
   pathLang?: Language,
 ) => {
+  const t = i18next.getFixedT(lang);
   const canonicalPath = lang === "ja" ? "/ja/about/" : "/about/";
   const articleJson = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: dictionary[lang].aboutPageTitle,
-    description: dictionary[lang].aboutDescription,
+    headline: t("aboutPageTitle"),
+    description: t("aboutDescription"),
     inLanguage: lang,
     url: `https://stock-back-calc.syaryn.com${canonicalPath}`,
     mainEntityOfPage: `https://stock-back-calc.syaryn.com${canonicalPath}`,
@@ -210,8 +214,8 @@ const renderAbout = (
 
   return c.html(
     <Layout
-      title={dictionary[lang].aboutPageTitle}
-      description={dictionary[lang].aboutDescription}
+      title={t("aboutPageTitle")}
+      description={t("aboutDescription")}
       lang={lang}
       pathLang={pathLang}
       canonicalPath={canonicalPath}
@@ -245,8 +249,32 @@ const redirectJapaneseBrowserToLocalizedPath = async (
   c: Context,
   next: () => Promise<void>,
 ) => {
+  const url = new URL(c.req.url);
+
+  // Exact path check instead of prefix match since app.use matches by prefix
+  if (
+    url.pathname !== "/" &&
+    url.pathname !== "/guide/" &&
+    url.pathname !== "/about/"
+  ) {
+    await next();
+    return;
+  }
+
+  c.header("Vary", "Cookie, Accept-Language");
+
   const persistedLanguage = getCookie(c, preferredLangCookieName);
-  if (persistedLanguage === "ja" || persistedLanguage === "en") {
+
+  if (persistedLanguage === "ja") {
+    url.pathname = url.pathname === "/guide/"
+      ? "/ja/guide/"
+      : url.pathname === "/about/"
+      ? "/ja/about/"
+      : "/ja/";
+    return c.redirect(url.toString(), 302);
+  }
+
+  if (persistedLanguage === "en") {
     await next();
     return;
   }
@@ -255,8 +283,6 @@ const redirectJapaneseBrowserToLocalizedPath = async (
     c.req.header("accept-language"),
   );
   if (preferredLanguage === "ja") {
-    const url = new URL(c.req.url);
-    c.header("Vary", "Accept-Language");
     url.pathname = url.pathname === "/guide/"
       ? "/ja/guide/"
       : url.pathname === "/about/"
