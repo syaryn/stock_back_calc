@@ -10,6 +10,7 @@ Deno.test("GET / defaults to English", async () => {
   const req = new Request("http://localhost:8000/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
   const text = await res.text();
   assertStringIncludes(text, "Current Values");
   assertStringIncludes(
@@ -55,6 +56,7 @@ Deno.test("GET /guide/ returns guide page metadata", async () => {
   const req = new Request("http://localhost:8000/guide/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
   const text = await res.text();
   assertStringIncludes(
     text,
@@ -82,6 +84,7 @@ Deno.test("GET /about/ returns about page metadata", async () => {
   const req = new Request("http://localhost:8000/about/");
   const res = await app.request(req);
   assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
   const text = await res.text();
   assertStringIncludes(
     text,
@@ -139,6 +142,67 @@ Deno.test("GET / with preferred_lang cookie skips Japanese auto redirect", async
   });
   const res = await app.request(req);
   assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
+});
+
+Deno.test("GET /guide/ with preferred_lang cookie skips Japanese auto redirect", async () => {
+  const req = new Request("http://localhost:8000/guide/", {
+    headers: {
+      "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+      "Cookie": "preferred_lang=en",
+    },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
+});
+
+Deno.test("GET /about/ with preferred_lang cookie skips Japanese auto redirect", async () => {
+  const req = new Request("http://localhost:8000/about/", {
+    headers: {
+      "Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
+      "Cookie": "preferred_lang=en",
+    },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
+});
+
+Deno.test("GET / with preferred_lang=ja cookie redirects to /ja/", async () => {
+  const req = new Request("http://localhost:8000/", {
+    headers: {
+      "Cookie": "preferred_lang=ja",
+    },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
+});
+
+Deno.test("GET /guide/ with preferred_lang=ja cookie redirects to /ja/guide/", async () => {
+  const req = new Request("http://localhost:8000/guide/", {
+    headers: {
+      "Cookie": "preferred_lang=ja",
+    },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/guide/");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
+});
+
+Deno.test("GET /about/ with preferred_lang=ja cookie redirects to /ja/about/", async () => {
+  const req = new Request("http://localhost:8000/about/", {
+    headers: {
+      "Cookie": "preferred_lang=ja",
+    },
+  });
+  const res = await app.request(req);
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/about/");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
 });
 
 Deno.test("GET /?lang=en on guide page redirects to English guide canonical path", async () => {
@@ -223,6 +287,27 @@ Deno.test("GET /en/about path without trailing slash redirects to /en/about/", a
   const res = await app.request(req);
   assertEquals(res.status, 301);
   assertEquals(res.headers.get("location"), "http://localhost:8000/about/");
+});
+
+Deno.test("GET /ja path without trailing slash redirects to /ja/", async () => {
+  const req = new Request("http://localhost:8000/ja");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/");
+});
+
+Deno.test("GET /ja/guide path without trailing slash redirects to /ja/guide/", async () => {
+  const req = new Request("http://localhost:8000/ja/guide");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/guide/");
+});
+
+Deno.test("GET /ja/about path without trailing slash redirects to /ja/about/", async () => {
+  const req = new Request("http://localhost:8000/ja/about");
+  const res = await app.request(req);
+  assertEquals(res.status, 301);
+  assertEquals(res.headers.get("location"), "http://localhost:8000/ja/about/");
 });
 
 Deno.test("GET /favicon.ico returns 200", async () => {
