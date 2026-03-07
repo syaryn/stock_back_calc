@@ -1,5 +1,5 @@
 import { html, raw } from "hono/html";
-import { dictionary, Language } from "../utils/i18n.ts";
+import i18next, { Language, resources } from "../utils/i18n.ts";
 import {
   calculateFundamentals,
   calculateTargetPrices,
@@ -26,9 +26,7 @@ export const Calculator = (props: CalculatorProps) => {
   const localizedPathLang = pathLang === "ja" || pathLang === "en"
     ? pathLang
     : undefined;
-  const localized = dictionary[initialLang];
-  const t = (key: string) =>
-    localized[key as keyof typeof dictionary.en] || key;
+  const t = i18next.getFixedT(initialLang);
   const homeHref = localizedPathLang === "ja" ? "/ja/" : "/";
   const guideHref = localizedPathLang === "ja" ? "/ja/guide/" : "/guide/";
   const aboutHref = localizedPathLang === "ja" ? "/ja/about/" : "/about/";
@@ -40,19 +38,18 @@ export const Calculator = (props: CalculatorProps) => {
     : "";
   const fallbackHref = targetLang === "ja"
     ? `/ja/${fallbackQuery}`
-    : `/${fallbackQuery}`;
+    : `/en/${fallbackQuery}`;
 
-  const dictJson = JSON.stringify(dictionary);
+  const resourcesJson = JSON.stringify(resources);
 
   const script = `
-const dictionaryData = ${dictJson};
+const resourcesData = ${resourcesJson};
 const calculateFundamentals = ${calculateFundamentals.toString()};
 const calculateTargetPrices = ${calculateTargetPrices.toString()};
 
 document.addEventListener('alpine:init', () => {
   Alpine.data('calculator', () => ({
     lang: '${initialLang}',
-    dict: dictionaryData,
     stockPrice: ${initialState.price ?? "null"},
     currentPer: ${initialState.per ?? "null"},
     currentPbr: ${initialState.pbr ?? "null"},
@@ -92,7 +89,8 @@ document.addEventListener('alpine:init', () => {
     },
 
     t(key) {
-      return this.dict[this.lang][key] || this.dict['en'][key] || key
+      if (typeof i18next === 'undefined') return key;
+      return i18next.t(key);
     },
 
     getLangSwitchUrl() {
@@ -100,7 +98,7 @@ document.addEventListener('alpine:init', () => {
       const params = new URLSearchParams(window.location.search);
       params.delete('lang');
       const search = params.toString() ? '?' + params.toString() : '';
-      return nextLang === 'ja' ? '/ja/' + search : '/' + search;
+      return nextLang === 'ja' ? '/ja/' + search : '/en/' + search;
     },
 
     formatCurrency(val) {
@@ -123,7 +121,15 @@ document.addEventListener('alpine:init', () => {
       return targetPrice > this.stockPrice ? 'color: var(--pico-color-emerald-500)' : 'color: var(--pico-color-pink-500)'
     },
 
-    init() {
+    async init() {
+      if (typeof i18next !== 'undefined') {
+        await i18next.init({
+          lng: this.lang,
+          fallbackLng: 'en',
+          resources: resourcesData,
+        });
+      }
+
       this.$watch('currentPer', (val) => {
         if (!this.targetPerDirty) this.targetPer = val;
         this.updateUrl();
@@ -156,8 +162,8 @@ document.addEventListener('alpine:init', () => {
       const newUrl = currentPath + search;
       window.history.replaceState({}, '', newUrl);
     }
-  }))
-})
+  }));
+});
   `;
 
   return html`
@@ -165,13 +171,14 @@ document.addEventListener('alpine:init', () => {
       <header class="site-nav">
         <nav>
           <ul>
-            <li><strong>${localized.toolNavLabel}</strong></li>
+            <li><strong>${t("toolNavLabel")}</strong></li>
           </ul>
           <ul>
-            <li><a href="${homeHref}" aria-current="page">${localized
-              .toolNavLabel}</a></li>
-            <li><a href="${guideHref}">${localized.guideNavLabel}</a></li>
-            <li><a href="${aboutHref}">${localized.aboutNavLabel}</a></li>
+            <li><a href="${homeHref}" aria-current="page">${t(
+              "toolNavLabel",
+            )}</a></li>
+            <li><a href="${guideHref}">${t("guideNavLabel")}</a></li>
+            <li><a href="${aboutHref}">${t("aboutNavLabel")}</a></li>
             <li>
               <a
                 href="https://github.com/syaryn/stock_back_calc"
@@ -211,8 +218,8 @@ document.addEventListener('alpine:init', () => {
       </header>
 
       <section class="page-lead">
-        <h1>${localized.introHeading}</h1>
-        <p>${localized.introBody}</p>
+        <h1>${t("introHeading")}</h1>
+        <p>${t("introBody")}</p>
       </section>
 
       <div class="responsive-grid">

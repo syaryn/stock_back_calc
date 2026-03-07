@@ -1,7 +1,7 @@
 import { html, raw } from "hono/html";
 
 import { Child } from "hono/jsx";
-import { dictionary } from "../utils/i18n.ts";
+import i18next from "../utils/i18n.ts";
 
 export const Layout = (
   props: {
@@ -29,7 +29,7 @@ export const Layout = (
     (props.pathLang === "ja" ? "/ja/" : "/");
   const explicitLang = canonicalPath.startsWith("/ja/") ? "ja" : "en";
   const currentUrl = new URL(canonicalPath.slice(1), baseUrl).toString();
-  const currentDict = explicitLang === "ja" ? dictionary.ja : dictionary.en;
+  const t = i18next.getFixedT(explicitLang);
   const articleSection = canonicalPath.includes("guide")
     ? "guide"
     : canonicalPath.includes("about")
@@ -60,10 +60,13 @@ export const Layout = (
     ],
   };
 
+  const faqItems = t("faq", { returnObjects: true }) as Array<
+    { q: string; a: string }
+  >;
   const faqJson = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: currentDict.faq.map((item) => ({
+    mainEntity: faqItems.map((item) => ({
       "@type": "Question",
       name: item.q,
       acceptedAnswer: {
@@ -143,6 +146,9 @@ export const Layout = (
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/picocss/2.1.1/pico.min.css"
         />
+        <script
+          src="https://cdnjs.cloudflare.com/ajax/libs/i18next/23.10.1/i18next.min.js"
+        ></script>
         <script
           src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.7/htmx.min.js"
           defer
