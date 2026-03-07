@@ -42,11 +42,11 @@ export const Guide = (props: { lang: Language; pathLang?: Language }) => {
                   media="(prefers-color-scheme: dark)"
                 />
                 <source
-                  srcset="/GitHub_Invertocat_White_Clearspace.svg"
+                  srcset="/GitHub_Invertocat_Black_Clearspace.svg"
                   media="(prefers-color-scheme: light)"
                 />
                 <img
-                  src="/GitHub_Invertocat_White_Clearspace.svg"
+                  src="/GitHub_Invertocat_Black_Clearspace.svg"
                   alt="GitHub"
                   width="20"
                   height="20"

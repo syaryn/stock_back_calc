@@ -261,6 +261,8 @@ const redirectJapaneseBrowserToLocalizedPath = async (
     return;
   }
 
+  c.header("Vary", "Cookie, Accept-Language");
+
   const persistedLanguage = getCookie(c, preferredLangCookieName);
 
   if (persistedLanguage === "ja") {
@@ -281,7 +283,6 @@ const redirectJapaneseBrowserToLocalizedPath = async (
     c.req.header("accept-language"),
   );
   if (preferredLanguage === "ja") {
-    c.header("Vary", "Accept-Language");
     url.pathname = url.pathname === "/guide/"
       ? "/ja/guide/"
       : url.pathname === "/about/"

@@ -28,7 +28,7 @@ Deno.test("GET / with Japanese Accept-Language redirects to /ja/", async () => {
   const res = await app.request(req);
   assertEquals(res.status, 302);
   assertEquals(res.headers.get("location"), "http://localhost:8000/ja/");
-  assertEquals(res.headers.get("vary"), "Accept-Language");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
 });
 
 Deno.test("GET / ignores q=0 language tags during negotiation", async () => {
@@ -75,7 +75,7 @@ Deno.test("GET /guide/ with Japanese Accept-Language redirects to /ja/guide/", a
   const res = await app.request(req);
   assertEquals(res.status, 302);
   assertEquals(res.headers.get("location"), "http://localhost:8000/ja/guide/");
-  assertEquals(res.headers.get("vary"), "Accept-Language");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
 });
 
 Deno.test("GET /about/ returns about page metadata", async () => {
@@ -105,7 +105,7 @@ Deno.test("GET /about/ with Japanese Accept-Language redirects to /ja/about/", a
   const res = await app.request(req);
   assertEquals(res.status, 302);
   assertEquals(res.headers.get("location"), "http://localhost:8000/ja/about/");
-  assertEquals(res.headers.get("vary"), "Accept-Language");
+  assertEquals(res.headers.get("vary"), "Cookie, Accept-Language");
 });
 
 Deno.test("GET /?lang=en sets preferred_lang cookie and redirects to canonical English path", async () => {
